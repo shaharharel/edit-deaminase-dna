@@ -50,3 +50,20 @@ multi-clone/multi-control filtering.) A valid DNA editing-INDEX gold needs BULK 
 5. 🟡 Cross-substrate Levanon RNA index (same deaminase) — remaining external check.
 The predicted intrinsic burden (19,357 genes, +GC control) stands as a sequence-intrinsic prior;
 it has no clean DNA continuous ground truth to calibrate against with current data.
+
+## F3 — Per-gene intrinsic susceptibility + cancer-driver tiering (rAPOBEC1/BE4)
+Ranked 19,357 genes by intrinsic (sequence/motif) susceptibility; tiered by OncoKB cancer drivers (259 present).
+- Cancer genes in top-10% susceptibility: 20 (expected 25.9) = **0.77x, NOT enriched (p=0.91)**.
+- Median susceptibility: cancer 0.267 vs other 0.273 (identical).
+- **Finding:** intrinsic deaminase-motif susceptibility is ~uniform across genes (TpC is ubiquitous in CDS),
+  so per-gene risk has LOW dynamic range and cancer drivers are NOT preferentially at risk.
+- Deliverable value: within-set RELATIVE prioritization (which cancer drivers rank highest for an editor:
+  POT1, MSH2, ATM, B2M, SETD2...) for screening triage — NOT a cancer-specific risk alarm.
+- Output: data/processed/risk_ranking_v1.parquet. UNCALIBRATED intrinsic prior.
+
+## Synthesis (honest bottom line)
+- f (deaminase chemistry/TpC): real, reproducible, transferable, simple-model-best, editor-specific.
+- BUT motif is genome-ubiquitous -> per-gene intrinsic susceptibility weakly differentiates genes.
+- Location (g): reproducible only >=1 Mb, cell-type-specific.
+- => Safety-gate value = per-EDITOR burden ranking + regional (>=1Mb) maps; per-gene cancer-driver
+  flagging is fundamentally limited (chemistry uniform, location regional+cell-specific).
