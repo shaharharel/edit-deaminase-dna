@@ -54,3 +54,32 @@ sequence + chromatin) rather than **measured**, on the permanent/heritable DNA s
 `experiments/phase3_validate/resolution_concordance.py` (resolution curve);
 `experiments/phase3_validate/{pred_gene_burden,correlate_gold}.py` (gold validation);
 gold pipeline: `build_cds_bed.py` + `gold_mpileup_par.sh` + `aggregate_gold.py`.
+
+---
+## Update (2026-05-23): full autonomous run — the f/g verdict
+
+After training the full model (incl. HyenaDNA on V100) and pursuing the g landscape:
+
+**f (deaminase preference) = a trinucleotide motif. No ML needed.**
+- trinuc-only (16 features) = 0.826 transfer ≈ full ±10bp/HyenaDNA models. Wider context & FM embeddings
+  do NOT help (HyenaDNA 0.56-0.64 << 0.82). The guide-independent preference is TpC, a lookup table.
+- Per-gene intrinsic susceptibility is ~uniform (TpC ubiquitous) → cancer drivers NOT enriched → per-gene
+  flagging is near-content-free.
+
+**g (accessibility landscape) = the genuine ML signal (modest, real).**
+- Chromatin predicts the >=1Mb guide-indep off-target landscape beyond opportunity+ascertainment
+  (LOCO Spearman 0.351 → 0.419), driven by DNase (open chromatin) + R-loop (ssDNA exposure).
+  Generalizes across held-out chromosomes. NON-motif, learnable.
+- Bounded by label reproducibility (~0.26 at 1Mb). Repli-seq (key ssDNA driver) collinear with DNase.
+
+## Final verdict (honest)
+- The defensible, ML-worthy product is a **regional (>=1Mb) chromatin-driven off-target susceptibility
+  model**, per editor — NOT a per-site or per-gene predictor.
+- The deaminase preference (f) is a motif: report it as a per-editor lookup + index, not ML.
+- Per-editor total-burden ranking (Buchumenski-style) is the cleanest safety deliverable.
+
+## Biggest levers (all acquisition/scope-gated)
+1. Better LABELS: bulk treated+control deep WGS (the gold we lack) — raises the ~0.26 ceiling.
+2. Replication timing + histone (modest, collinear with DNase).
+3. Guide-DEPENDENT extension: predict per-therapy-guide off-targets (homology × window × context ×
+   accessibility) — the ML-hard, clinically critical problem (CHANGE-seq-BE + libraries), set aside here.
