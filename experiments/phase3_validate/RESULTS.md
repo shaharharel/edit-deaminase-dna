@@ -31,6 +31,22 @@ deaminase-motif reproducibility (cosine 0.996), the picture is:
 (2) ≥1 Mb calibrated regional risk maps; (3) per-editor total-burden ranking. Per-gene *calibrated*
 absolute burden is NOT cross-assay defensible.
 
-## P3b — Predicted intrinsic burden vs BE4 WGS gold index
-- pred_gene_burden_v1: rAPOBEC1 preference model scored over CDS C's of 19,357 genes.
-- Gold BE4 index: computing (BE4_clone1 − Parent_WGS, CDS C→T, TpC-QC gated). Correlation pending.
+## P3b — BE4 WGS gold index: REJECTED by TpC QC (germline/clonal contamination)
+Computed BE4_clone1 vs Parent_WGS over 186k CDS intervals (16.1M C sites, global CDS C→T 0.10%).
+**TpC QC gate FAILED: 24.9% TpC** (APOBEC needs >40%; Doman/McGrath called sites = 81–90%).
+Diagnosis (`clean_gold.py`): of 61,706 de-novo C→T variants (clean in parent),
+- **98.6% are clonal-fixed (median VAF = 1.0, homozygous)** → germline/lineage differences, not edits
+- TpC = 25% in BOTH clonal-fixed and low-level fractions → **no APOBEC enrichment at any VAF**
+- only ~206 clean (TpC + sub-clonal) edits survive.
+**Conclusion:** a single treated-clone vs single-parent WGS pair is germline-dominated and CANNOT serve
+as a continuous editing-index gold. (Doman's *published* sites are clean only because Doman used
+multi-clone/multi-control filtering.) A valid DNA editing-INDEX gold needs BULK deep WGS (not available).
+
+### Validation backbone (revised, honest)
+1. ✅ Cross-cell-type motif transfer (Doman↔McGrath, AUROC 0.82) — held-out lab+cell-type, same enzyme.
+2. ✅ Resolution-concordance (≥1 Mb reproducibility).
+3. ✅ Cross-source motif reproducibility (cosine 0.996).
+4. ❌ BE4 WGS continuous gold — not usable (germline-dominated).
+5. 🟡 Cross-substrate Levanon RNA index (same deaminase) — remaining external check.
+The predicted intrinsic burden (19,357 genes, +GC control) stands as a sequence-intrinsic prior;
+it has no clean DNA continuous ground truth to calibrate against with current data.
