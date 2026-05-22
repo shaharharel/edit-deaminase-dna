@@ -75,8 +75,9 @@ for r in longest.itertuples():
         ctxs.append(w if r.strand=='+' else rc(w))
     if len(ctxs)<5: continue
     pr=proba(model,onehot(ctxs))
-    rows.append((r.name2,len(ctxs),float(pr.mean())))
-out=pd.DataFrame(rows,columns=['gene','n_C_scored','pred_burden'])
+    gc=np.mean([ (s.count('G')+s.count('C'))/len(s) for s in ctxs ])  # GC control
+    rows.append((r.name2,len(ctxs),float(pr.mean()),float(gc)))
+out=pd.DataFrame(rows,columns=['gene','n_C_scored','pred_burden','gc_mean'])
 out.to_parquet('data/processed/pred_gene_burden_v1.parquet',index=False)
 print(f"scored {len(out)} genes -> data/processed/pred_gene_burden_v1.parquet")
 print(out.sort_values('pred_burden',ascending=False).head(10).to_string(index=False))

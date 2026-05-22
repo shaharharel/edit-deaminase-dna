@@ -39,6 +39,14 @@ for mincov in [100, 1000, 5000]:
     lo,hi=np.percentile(boot,[2.5,97.5])
     print(f"\n[cov>={mincov}] n={len(s)}  Spearman(pred, EXCESS index)={rho:+.3f}  [95% CI {lo:+.3f},{hi:+.3f}]  perm-null p={p:.3f}")
     print(f"            Spearman(pred, treated index)={rho_t:+.3f}")
+    # GC confound control (QA P0-1): does pred add beyond GC?
+    if 'gc_mean' in s.columns:
+        rho_gc=spearman(s.gc_mean, s.excess_index_pct)
+        def _resid(y,x):
+            x=pd.Series(x).rank().values; y=pd.Series(y).rank().values
+            b=np.polyfit(x,y,1); return y-(b[0]*x+b[1])
+        rp=_resid(s.pred_burden.values,s.gc_mean.values); rgd=_resid(s.excess_index_pct.values,s.gc_mean.values)
+        print(f"            GC-only vs gold={rho_gc:+.3f} | pred-vs-gold PARTIAL(|GC)={float(np.corrcoef(rp,rgd)[0,1]):+.3f}")
     # top-decile enrichment: are high-pred genes enriched in high-gold?
     s=s.copy(); s['pred_top']=s.pred_burden>=s.pred_burden.quantile(0.9)
     hi_gold=s.excess_index_pct>=s.excess_index_pct.quantile(0.9)
