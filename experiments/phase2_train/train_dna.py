@@ -4,7 +4,7 @@ Usage:
     python experiments/phase2_train/train_dna.py \
         --embeddings ~/dna_emb/hyenadna_dna_offtarget_combined.pt \
         --emb-dim 256 \
-        --encode /mnt/data/dna_features/encode_features.parquet \
+        --encode data/processed/encode_features.parquet \
         --device cuda
 
 Or Evo-2:

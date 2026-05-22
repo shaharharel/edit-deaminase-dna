@@ -134,8 +134,8 @@ def main():
     combined_E.to_parquet(ROOT / "dna_offtarget_combined_E.parquet", index=False)
     print(f"[main] E: {len(combined_E)} total")
 
-    # Strategy D (depends on handcraft features being downloadable from ai-chem)
-    # We'll pull them via gcloud first
+    # Strategy D (depends on handcraft features being downloadable from the compute node)
+    # We'll pull them first
     hand_path = ROOT / "handcrafted_features_v3.parquet"
     if hand_path.exists():
         neg_D = build_strategy_D(pos, fa, hand_path)

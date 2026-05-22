@@ -32,7 +32,7 @@ Phase D (joint RNA+DNA) is **backlog only**. Build the two models separately and
 | Dataset | Editor | Status | Size |
 |---|---|---|---|
 | Lei 2021 Detect-seq | BE4max | Have | tiny BEDs |
-| Doman 2020 BE4_clone1 + Parent_WGS | BE4 | Have on ai-chem | 268 GB BAMs |
+| Doman 2020 BE4_clone1 + Parent_WGS | BE4 | Have (remote) | 268 GB BAMs |
 | **Doman 2020 additional clones** | BE4, YE1-BE4, A3A-BE × 3 ea | Need to download | ~500 GB |
 | **CHANGE-seq-BE 2025** (Lazzarotto/Tsai) | ABE8e, eA3A-BE3 genome-wide | Need to download | ~100 GB |
 | Yu 2020 (Beam Therapeutics) | YE1-BE4-FNLS variants | Need | ~100 GB |
@@ -74,6 +74,6 @@ These are duplicated, not symlinked, for repo independence. If they need updatin
 
 ## Compute
 
-- **ai-chem** (n2-standard-16, /mnt/data 1TB) — primary DNA FASTQ + alignment
-- **ai-gpu / ai-gpu2** (T4 / V100) — model training when available
+- **CPU compute node** (large data volume) — primary DNA FASTQ + alignment
+- **GPU node(s)** (T4 / V100 class) — model training when available
 - **Local laptop** — model code development, smoke tests, small experiments

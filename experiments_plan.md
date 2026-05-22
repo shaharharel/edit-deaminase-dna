@@ -154,8 +154,8 @@ Tracks ALL experiments we want to run, organized by phase. Status: ✅ done / �
 
 ## Currently Running / Blocked
 
-- 🟡 Evo-2 install on ai-gpu-a100-b — model weights downloading
-- 🟡 Levanon STAR alignment continuing on ai-chem (REDItools deferred until per-PRJNA strand inferred)
+- 🟡 Evo-2 install on the A100 GPU node — model weights downloading
+- 🟡 Levanon STAR alignment continuing on the compute node (REDItools deferred until per-PRJNA strand inferred)
 - ⏸️ PRJNA923001 dropped (mouse + amplicon-seq, not transcriptome RNA-seq)
 - ⏸️ Joint RNA+DNA (Phase Z) deferred until D.4 (Evo-2) lands + E.1-E.3 expansion done
 

@@ -1,4 +1,4 @@
-# Data lives on ai-chem (/mnt/data) and locally — not in git (licensing + size)
+# Data lives on the remote compute node and locally — not in git (licensing + size)
 /data/
 *.parquet
 *.bam

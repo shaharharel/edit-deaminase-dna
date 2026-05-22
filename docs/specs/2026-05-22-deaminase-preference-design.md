@@ -75,7 +75,7 @@ transferable deaminase preference. Deliverable produced by **aggregation** to ge
 ### Inputs
 - **Local sequence (f):** start with handcrafted context (tri/penta-nucleotide one-hot,
   ±k window) — directly the deaminase motif; add HyenaDNA / Evo-2 embeddings later.
-- **Accessibility (g):** ENCODE tracks already on ai-chem — R-loop (MapR), ATAC, DNase,
+- **Accessibility (g):** ENCODE tracks already on the compute node — R-loop (MapR), ATAC, DNase,
   histone, conservation, mappability. **Replication timing (repliseq) MISSING — download
   (key ssDNA-exposure determinant).**
 - **Editor/deaminase embedding:** reuse shared decomposed schema (deaminase_family +
@@ -92,9 +92,9 @@ Strategy-D leak class entirely.
   per source. Drop guide-dependent (CHANGE-seq) and Doman-orthogonal-assay spatial signal
   (use Doman for *motif* only, not genome-wide spatial).
 - **Gold calibration + held-out test (1 editor):** BE4_clone1 vs Parent_WGS deep WGS on
-  ai-chem → real CDS C→T editing index (treated − control), via RNAEditingIndexer/mpileup.
+  the compute node → real CDS C→T editing index (treated − control), via RNAEditingIndexer/mpileup.
   Recover the crashed Mutect2 call (missing `.stats`).
-- **Cross-substrate validation:** Levanon RNA BAMs on ai-chem → RNA editing index per
+- **Cross-substrate validation:** Levanon RNA BAMs on the compute node → RNA editing index per
   deaminase; test DNA↔RNA preference consistency for matched enzymes.
 
 ## 5. Evaluation
