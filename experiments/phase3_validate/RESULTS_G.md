@@ -127,3 +127,13 @@ Factored: editor motif (f) x validated chromatin landscape (g). Full-data fit, B
 Richter (ABE8e), per-1Mb LOCO: baseline (A-opportunity+mappability) 0.501 -> +chromatin **0.667**.
 r_ATAC 0.63, r_DNase 0.45, top10% concentration 0.54 -> Richter ABE off-targets cluster in accessible
 chromatin just like CBE. **g works for BOTH editor classes (CBE 0.667, ABE 0.667).** Adds ABE coverage.
+
+## END-TO-END cross-editor-class generalization (2026-05-23)
+Consolidated accessibility model, LOCO Spearman:
+- CBE model -> CBE landscape (within): 0.662
+- ABE model -> ABE landscape (within): 0.667
+- **CBE model -> ABE landscape (CROSS-CLASS): 0.647**
+- **ABE model -> CBE landscape (CROSS-CLASS): 0.644**
+- raw CBE-vs-ABE landscape corr 0.55 (model transfer 0.647 > raw => model captures shared accessibility coupling)
+=> ONE editor-class-agnostic accessibility model predicts both CBE and ABE off-target landscapes
+   (ssDNA exposure is base-agnostic; editor differs only in the motif f).
