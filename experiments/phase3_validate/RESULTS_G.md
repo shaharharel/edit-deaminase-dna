@@ -66,3 +66,21 @@ cell-type tracks barely changes predictions.
   up to 0.64 on the cleanest source (Yu). Driven by DNase/ATAC/R-loop accessibility.
 - Per-source predictability (0.0-0.64) is driven by DATA QUALITY/assay, not cell type.
 - Cell-type matching: NOT supported at this resolution. Clinical track-swapping is weakly justified.
+
+## Data-quality investigation (2026-05-23) — what makes off-target risk PREDICTABLE
+Per-source: dispersion (Gini), raw accessibility correlation, motif, g-predictability.
+| source | assay | TpC | Gini | r_DNase | r_ATAC | gPred |
+|---|---|---|---|---|---|---|
+| Yu | bulk WGS off-target | 0.17 | 0.73 | 0.47 | 0.62 | 0.64 |
+| Lei | Detect-seq (genome-wide) | 0.48 | 0.75 | 0.38 | 0.33 | 0.40 |
+| Doman | orthogonal R-loop (guide-placed) | 0.81 | 0.31 | 0.21 | 0.13 | 0.22 |
+| McGrath | iPSC clonal WGS de-novo | 0.90 | 0.28 | 0.07 | -0.01 | 0.006 |
+
+**Predictability = accessibility-clustering of the assay's edits, NOT motif cleanliness.** Bulk/genome-wide
+assays (Yu/Lei) capture the population accessibility-weighted landscape (clustered, r_DNase 0.4-0.5)
+=> predictable. Clonal capture (McGrath: one cell's dispersed fixed de-novo set) loses the accessibility
+weighting => unpredictable despite cleanest motif. Orthogonal (Doman) = guide-placed artifact.
+
+**=> "Predictable off-target risk" = the population accessibility-weighted regional landscape.
+Requires bulk/genome-wide assays (the bulk-WGS gold). The bottleneck is DATA QUALITY + label noise,
+not model sophistication.**
