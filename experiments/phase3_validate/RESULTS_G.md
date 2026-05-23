@@ -154,3 +154,12 @@ controlled for gene density. Tests confirm:
 - Honest cross-generalization = leave-one-source-out 0.37-0.56.
 - Deliverable = >=1Mb relative-rank prior tracking gene-dense-accessible regions; cancer content mostly density.
 See docs/END_TO_END.md for the corrected summary.
+
+## CONTROL-BY-DESIGN: within-gene-density-stratum prediction (2026-05-24)
+Cohort recommendation: instead of regressing out gene density (fragile +0.04), predict WITHIN gene-density
+quintiles (constant gene density by construction).
+- per-quintile pred->obs Spearman: 0.243, 0.387, 0.384, 0.338, 0.407 (all positive)
+- DNase-alone within-stratum: 0.21-0.32
+- **POOLED within-stratum Spearman(pred,obs) = 0.351** (vs global 0.667; gene_density global 0.607)
+=> **accessibility predicts the off-target landscape even at CONSTANT gene density** (control-by-design,
+not regression). This is the confound-proof version of the accessibility claim. Defensible headline.
