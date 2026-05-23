@@ -137,3 +137,20 @@ Consolidated accessibility model, LOCO Spearman:
 - raw CBE-vs-ABE landscape corr 0.55 (model transfer 0.647 > raw => model captures shared accessibility coupling)
 => ONE editor-class-agnostic accessibility model predicts both CBE and ABE off-target landscapes
    (ssDNA exposure is base-agnostic; editor differs only in the motif f).
+
+## QA CORRECTION (2026-05-23) — gene-density confound (4th over-claim, caught by QA)
+Two QA agents (code + scientific) flagged that the chromatin "delta" and cross-class claims were not
+controlled for gene density. Tests confirm:
+- gene_density alone vs landscape: **+0.607** (> DNase 0.528). It is the dominant predictor.
+- baseline weak (opp+motif+map) 0.576 -> STRICT (+GC+gene_density) 0.627.
+- chromatin delta: over weak +0.091 -> **over STRICT only +0.040**. ~Half the "chromatin signal" was gene density.
+- cancer-flagging: Spearman(risk,cancer) 0.246 but partial(risk,cancer|gene_density) **+0.098** -> mostly density.
+- cross-editor-class 0.647: circular (logA mirrors logC; landscapes co-localize in gene-dense regions, raw 0.55).
+- "exceeds inter-assay 0.26": apples-to-oranges (in-target vs cross-assay) -> retracted.
+
+### Corrected honest claims
+- Landscape predictable ~0.63, DOMINATED by gene-density+opportunity (deterministic).
+- Chromatin/accessibility adds a MODEST real +0.04 beyond gene density (autocorrelation-controlled).
+- Honest cross-generalization = leave-one-source-out 0.37-0.56.
+- Deliverable = >=1Mb relative-rank prior tracking gene-dense-accessible regions; cancer content mostly density.
+See docs/END_TO_END.md for the corrected summary.
