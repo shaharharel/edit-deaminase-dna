@@ -122,3 +122,8 @@ Factored: editor motif (f) x validated chromatin landscape (g). Full-data fit, B
   cancer-driver megabase regions for screening triage.
 - Both experts converge: bottleneck is DATA (N=2,838 bins, 0.26 label noise), not architecture; deep nets/Enformer
   don't help on current data; levers = more bulk genome-wide sources + NB-GLM calibration.
+
+## g GENERALIZES TO ABE (2026-05-23) — cross-editor-class validation
+Richter (ABE8e), per-1Mb LOCO: baseline (A-opportunity+mappability) 0.501 -> +chromatin **0.667**.
+r_ATAC 0.63, r_DNase 0.45, top10% concentration 0.54 -> Richter ABE off-targets cluster in accessible
+chromatin just like CBE. **g works for BOTH editor classes (CBE 0.667, ABE 0.667).** Adds ABE coverage.
