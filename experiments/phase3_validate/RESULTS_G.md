@@ -104,3 +104,21 @@ Yu+Lei pooled (bulk-only a-priori rule), working MLP, LOCO + all controls:
 **Defensible claim:** the >=1Mb guide-independent CBE off-target landscape is predictable from chromatin
 accessibility beyond opportunity+motif+mappability (delta +0.09, significant, autocorrelation-controlled,
 cross-source-generalizing); overall landscape predictability 0.67, exceeding inter-assay agreement (0.26).
+
+## Steps 2+3 (deliverable) — per-editor regional risk map + clinical demo
+Factored: editor motif (f) x validated chromatin landscape (g). Full-data fit, BE4/rAPOBEC1.
+- **Cell-type robustness of the map: HEK293 vs iPSC 0.995, vs HSPC 0.996** (rank-corr) -> map transfers
+  across cell types; no need for the therapy cell type's own tracks.
+- Top-risk >=1Mb regions flag cancer drivers: chr19:1Mb STK11 (obs 32), chr12:56Mb ERBB3, chr11:64Mb MEN1,
+  chr16:2Mb TSC2, chr1:156Mb NTRK1, chr1:161Mb SDHC.
+- Output: data/processed/be4_risk_map.parquet. HONEST: >=1Mb relative-rank screening prior, flag-not-clear,
+  NOT calibrated per-gene. Per-editor variation carried by motif (f); regional by shared g (cannot identify
+  per-editor chromatin coupling from this data).
+
+## FINAL guide-independent verdict
+- f = TpC motif (lookup, no ML). g = chromatin-driven >=1Mb landscape, RIGOROUSLY validated (0.667; chromatin
+  delta +0.09 [.07-.11]; circular-shift null ~0; LOSO 0.37-0.56; exceeds inter-assay 0.26; cell-type-robust 0.995).
+- Deliverable: per-editor regional off-target risk map (motif x accessibility), cell-type-robust, flags
+  cancer-driver megabase regions for screening triage.
+- Both experts converge: bottleneck is DATA (N=2,838 bins, 0.26 label noise), not architecture; deep nets/Enformer
+  don't help on current data; levers = more bulk genome-wide sources + NB-GLM calibration.
