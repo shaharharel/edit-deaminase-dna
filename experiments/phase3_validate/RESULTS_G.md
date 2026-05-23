@@ -48,3 +48,21 @@ signal: per-editor (motif rate) x target-cell-type accessibility, regional resol
 - iPSC accessibility tracks would rescue McGrath (test the matching claim symmetrically).
 - More HEK293 genome-wide sources; Repli-seq (pending); per-editor model.
 - Clinical: score a therapy's target cell type -> regional off-target risk map.
+
+## g v3 (2026-05-23) — SYMMETRIC cell-type test REFUTES the cell-type-matching claim
+Added iPSC (H1) + HSPC (CD34+) DNase. Per-source LOCO, swapping the cell-type DNase track:
+- McGrath(iPSC): +HEK293=0.105, +iPSC=0.077, +HSPC=0.107 -> iPSC did NOT rescue it.
+- Yu(HEK293): +HEK293=0.558, +iPSC=0.595 -> matched did NOT win.
+- Cross-cell-type DNase tracks are highly correlated -> ~interchangeable at 1Mb.
+
+**CORRECTION:** the dramatic per-source gap (Yu 0.64 vs McGrath 0.006) is NOT cell-type matching.
+It is DATA-QUALITY / assay-type: Yu = clean genome-wide HEK293 (regionally clustered, predictable);
+McGrath = clonal iPSC de-novo (dispersed/germline-contaminated, ~unpredictable); Doman = orthogonal
+R-loop assay (guide-placed artifact). DNase is broadly cell-type-invariant at 1Mb, so swapping
+cell-type tracks barely changes predictions.
+
+### Honest status of g
+- g (chromatin -> regional >=1Mb landscape) IS real: pooled LOCO 0.47 controlling for motif+opportunity;
+  up to 0.64 on the cleanest source (Yu). Driven by DNase/ATAC/R-loop accessibility.
+- Per-source predictability (0.0-0.64) is driven by DATA QUALITY/assay, not cell type.
+- Cell-type matching: NOT supported at this resolution. Clinical track-swapping is weakly justified.
