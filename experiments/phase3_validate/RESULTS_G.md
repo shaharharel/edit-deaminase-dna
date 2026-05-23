@@ -91,3 +91,16 @@ Local conv (f) + regional bin-tracks (g) + editor, trained at site level (18,397
 - **Unified net Spearman = 0.619** ≈ hand-split g (Yu 0.64). Does NOT beat it.
 - Confirms: learned f+g combination matches the track-MLP; local motif adds nothing at bin scale;
   ceiling is the regional track signal + data (N=2,838, label noise 0.26), not architecture.
+
+## RIGOROUS validation (2026-05-23, expert-guided) — the defensible result
+Yu+Lei pooled (bulk-only a-priori rule), working MLP, LOCO + all controls:
+- baseline (opportunity+motif+mappability): 0.576
+- **+ chromatin: 0.667** [95% CI 0.644-0.684]; **delta +0.091** [CI +0.070,+0.110] (excludes 0)
+- **circular-shift null ~0** (95th 0.036) vs real 0.667 -> not spatial-autocorrelation
+- **leave-one-source-out 0.37-0.56** -> chromatin coupling generalizes across sources
+- noise ceiling: Yu split-half 0.395 (full ~0.57); inter-assay 0.26 -> model EXCEEDS inter-assay agreement
+- (Poisson GLM attempt overflowed -> negative numbers were a BUG, disregarded; NB-GLM for calibration is future work)
+
+**Defensible claim:** the >=1Mb guide-independent CBE off-target landscape is predictable from chromatin
+accessibility beyond opportunity+motif+mappability (delta +0.09, significant, autocorrelation-controlled,
+cross-source-generalizing); overall landscape predictability 0.67, exceeding inter-assay agreement (0.26).
