@@ -84,3 +84,10 @@ weighting => unpredictable despite cleanest motif. Orthogonal (Doman) = guide-pl
 **=> "Predictable off-target risk" = the population accessibility-weighted regional landscape.
 Requires bulk/genome-wide assays (the bulk-WGS gold). The bottleneck is DATA QUALITY + label noise,
 not model sophistication.**
+
+## #1 Unified multi-scale net (2026-05-23)
+Local conv (f) + regional bin-tracks (g) + editor, trained at site level (18,397 sites), bin-level eval,
+5-chromosome-fold holdout, target = Yu+Lei pooled edit density.
+- **Unified net Spearman = 0.619** ≈ hand-split g (Yu 0.64). Does NOT beat it.
+- Confirms: learned f+g combination matches the track-MLP; local motif adds nothing at bin scale;
+  ceiling is the regional track signal + data (N=2,838, label noise 0.26), not architecture.
