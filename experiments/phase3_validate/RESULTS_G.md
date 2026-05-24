@@ -163,3 +163,17 @@ quintiles (constant gene density by construction).
 - **POOLED within-stratum Spearman(pred,obs) = 0.351** (vs global 0.667; gene_density global 0.607)
 => **accessibility predicts the off-target landscape even at CONSTANT gene density** (control-by-design,
 not regression). This is the confound-proof version of the accessibility claim. Defensible headline.
+
+## SHOWCASE: recover published guide-independent off-target LOCATIONS (held-out, 2026-05-24)
+User reframe: predict the published off-target LOCATIONS (no bulk WGS needed). Regional recall @ top-K% bins.
+| held-out test | top-10% recall | gene-density recall | random | x random |
+|---|---|---|---|---|
+| ABE Richter (model=CBE, held-out editor-class) | 24.1% | 24.0% | 10% | 2.4x |
+| CBE Yu (model=Lei, held-out source) | 25.5% | 24.2% | 10% | 2.6x |
+=> Model recovers ~24% of held-out off-targets in top 10% genome (2.4-2.6x random), generalizes CBE->ABE.
+BUT ~= gene-density baseline (off-targets concentrate in gene-dense regions). The accessibility value-add
+beyond gene density is the within-stratum result (0.35), not the raw recall.
+
+NOTE: the 3 ADAR/RNA-editing papers (s41467-026-69835-w RECODE, s41587-025-02591-2 RtABE,
+s41589-025-02026-8 snRNA-ADAR) are RNA guide-dependent editors -> not DNA off-target data; relevant to
+the sister RNA project, not this one.
