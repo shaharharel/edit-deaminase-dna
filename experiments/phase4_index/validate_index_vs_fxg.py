@@ -21,20 +21,36 @@ def spearman(x, y):
     return 1 - 6 * (d**2).sum() / (n * (n**2 - 1))
 
 print(f"genes in common: {len(m):,}")
-print(f"Spearman(empirical_DEI_tpc, predicted_fxg):     {spearman(m.DEI_tpc, m.fxg_score):.3f}")
-print(f"Spearman(empirical_DEI_npc, predicted_fxg):     {spearman(m.DEI_npc, m.fxg_score):.3f}  <- motif-negative control")
-print(f"Spearman(empirical_DEI_tpc, gene_density):      {spearman(m.DEI_tpc, m.gene_density if 'gene_density' in m else m.tT_n_pos):.3f}  <- confound control")
-print(f"Spearman(empirical_DEI_tpc, predicted_f_only):  {spearman(m.DEI_tpc, m.f_only):.3f}")
-print(f"Spearman(empirical_DEI_tpc, predicted_g_only):  {spearman(m.DEI_tpc, m.g_only):.3f}")
+# IMPORTANT: empirical DEI is a RATE per gene; compare to predicted MEAN (also a rate),
+# NOT the sum which favors large genes. Use fxg_score_mean.
+PRED_RATE = m.fxg_score_mean if 'fxg_score_mean' in m else m.fxg_score
+PRED_SUM  = m.fxg_score if 'fxg_score' in m else PRED_RATE
 
-# top-K recall of high-DEI genes
+print("\n=== Rate-vs-rate (the honest comparison) ===")
+print(f"Spearman(empirical_DEI_tpc, predicted_fxg_MEAN):     {spearman(m.DEI_tpc, PRED_RATE):.3f}")
+print(f"Spearman(empirical_DEI_npc, predicted_fxg_MEAN):     {spearman(m.DEI_npc, PRED_RATE):.3f}  <- motif-negative control")
+print(f"Spearman(empirical_DEI_tpc, n_tpc_in_gene):          {spearman(m.DEI_tpc, m.n_tpc if 'n_tpc' in m else m.tT_n_pos):.3f}  <- gene-size / TpC-opportunity confound control")
+print(f"Spearman(empirical_DEI_tpc, predicted_f_only):       {spearman(m.DEI_tpc, m.f_only):.3f}")
+print(f"Spearman(empirical_DEI_tpc, predicted_g_only):       {spearman(m.DEI_tpc, m.g_only):.3f}")
+
+print("\n=== Sum-vs-sum (gene-size driven; lower bar) ===")
+print(f"Spearman(empirical_DEI_tpc * n_tpc, fxg_SUM):         {spearman(m.DEI_tpc * m.n_tpc, PRED_SUM) if 'n_tpc' in m else float('nan'):.3f}")
+
+# top-K recall of high-DEI genes — using the rate
 def recall_top_k(emp, pred, K=0.10):
     n = len(emp)
     top_emp = set(np.argsort(-emp.values)[:int(K*n)])
     top_pred = set(np.argsort(-pred.values)[:int(K*n)])
     return len(top_emp & top_pred) / len(top_emp)
 
-print(f"\nRecall of top-10% empirically-edited genes within top-10% predicted: {recall_top_k(m.DEI_tpc, m.fxg_score):.3f}")
-print(f"Recall of top-1% empirically-edited genes within top-1% predicted:   {recall_top_k(m.DEI_tpc, m.fxg_score, 0.01):.3f}")
+print(f"\n=== Recall@top-K (rate-based ranking) ===")
+print(f"Top-10% empirical DEI captured by top-10% predicted (rate): {recall_top_k(m.DEI_tpc, PRED_RATE):.3f}")
+print(f"Top-5%  empirical DEI captured by top-5%  predicted (rate): {recall_top_k(m.DEI_tpc, PRED_RATE, 0.05):.3f}")
+print(f"Top-1%  empirical DEI captured by top-1%  predicted (rate): {recall_top_k(m.DEI_tpc, PRED_RATE, 0.01):.3f}")
+
+# enrichment in the motif-negative control (should be ~random)
+print(f"\n=== Sanity: motif-negative control (should be ~K%) ===")
+print(f"Top-10% empirical DEI_npc captured by top-10% predicted:    {recall_top_k(m.DEI_npc, PRED_RATE):.3f}")
 
 m.to_parquet(OUT)
+print(f"\nWrote {OUT}")
