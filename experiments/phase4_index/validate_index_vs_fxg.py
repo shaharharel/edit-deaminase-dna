@@ -15,10 +15,15 @@ p = pd.read_parquet(PRED)
 m = e.merge(p, on='gene', how='inner')
 
 def spearman(x, y):
-    n = len(x)
-    rx = pd.Series(x).rank(); ry = pd.Series(y).rank()
-    d = rx - ry
-    return 1 - 6 * (d**2).sum() / (n * (n**2 - 1))
+    # Pearson of ranks = proper tie-corrected Spearman.
+    # The shortcut formula 1 - 6 sum(d^2)/(n(n^2-1)) is WRONG when ties exist
+    # (and our DEI has many ties at zero).
+    rx = pd.Series(x).rank().values
+    ry = pd.Series(y).rank().values
+    rx = rx - rx.mean()
+    ry = ry - ry.mean()
+    denom = np.sqrt((rx**2).sum() * (ry**2).sum())
+    return float((rx * ry).sum() / denom) if denom > 0 else 0.0
 
 print(f"genes in common: {len(m):,}")
 # IMPORTANT: empirical DEI is a RATE per gene; compare to predicted MEAN (also a rate),
