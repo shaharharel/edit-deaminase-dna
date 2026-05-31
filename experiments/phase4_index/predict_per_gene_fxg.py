@@ -65,9 +65,15 @@ assert b['bin'].max() < 1000, f"bins file 'bin' column appears to be a coordinat
 g_arr = b[['dnase','atac','rloop','h3k27ac']].values
 mu = np.nanmean(g_arr, 0); sd = np.nanstd(g_arr, 0) + 1e-6
 g_arr_z = (g_arr - mu) / sd
-g_score = g_arr_z.mean(axis=1)  # composite g per bin
+# BUGFIX: per-bin mean must IGNORE NaN tracks (some bins missing R-loop or ATAC).
+# Default np.mean on row with NaN -> NaN -> g_only all-NaN -> Spearman blows up.
+g_score = np.nanmean(g_arr_z, axis=1)
+# any bin where ALL 4 tracks are NaN gets g_score = NaN; replace with the global mean (0 after z).
+nan_bins = int(np.isnan(g_score).sum())
+g_score = np.where(np.isnan(g_score), 0.0, g_score)
 acc = {(r.chrom, int(r.bin)): g_score[i] for i,r in enumerate(b.itertuples())}
-print(f"loaded {len(acc):,} 1Mb bins with accessibility composite", file=sys.stderr)
+print(f"loaded {len(acc):,} 1Mb bins with accessibility composite ({nan_bins} bins all-NaN -> 0)", file=sys.stderr)
+print(f"g_score stats: mean={g_score.mean():.4f} std={g_score.std():.4f} non-NaN={(~np.isnan(g_score)).sum()}/{len(g_score)}", file=sys.stderr)
 
 # --- 3) score every CDS TpC site, aggregate per gene ---
 per_gene_f = defaultdict(list)
