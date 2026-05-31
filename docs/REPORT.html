@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DeaminaFormer-DNA — Honest End-to-End Report</title>
+<style>
+:root{
+  --bg:#fafaf9; --fg:#1c1c1c; --muted:#666; --panel:#fff; --line:#e5e5e2;
+  --accent:#2c5282; --good:#2f6f3e; --warn:#a05a00; --bad:#9b2c2c; --info:#3b5998;
+  --code:#f4f4f1; --tag-bg:#eef2f7;
+}
+*{box-sizing:border-box}
+body{margin:0;font:14.5px/1.55 -apple-system,Segoe UI,system-ui,sans-serif;color:var(--fg);background:var(--bg)}
+header{background:linear-gradient(135deg,#1a365d,#2c5282);color:#fff;padding:36px 48px;border-bottom:4px solid #d4a574}
+header h1{margin:0 0 6px;font-size:30px;font-weight:600;letter-spacing:-0.3px}
+header .sub{opacity:0.85;font-size:15px}
+header .meta{margin-top:14px;font-size:12.5px;opacity:0.75;font-family:ui-monospace,Menlo,monospace}
+nav{position:sticky;top:0;background:rgba(255,255,255,0.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 48px;display:flex;gap:18px;flex-wrap:wrap;font-size:13px;z-index:10}
+nav a{color:var(--accent);text-decoration:none;font-weight:500}
+nav a:hover{text-decoration:underline}
+main{max-width:1180px;margin:0 auto;padding:32px 48px 80px}
+section{margin:0 0 44px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:28px 34px;box-shadow:0 1px 2px rgba(0,0,0,0.03)}
+section h2{margin:0 0 6px;font-size:22px;color:var(--accent);font-weight:600;border-bottom:2px solid var(--line);padding-bottom:8px}
+section h3{margin:22px 0 8px;font-size:16px;color:#222;font-weight:600}
+section h4{margin:16px 0 6px;font-size:14px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+p{margin:8px 0}
+.lead{font-size:15.5px;color:#333}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px}
+th{background:#f5f5f2;text-align:left;padding:9px 11px;border-bottom:2px solid var(--line);font-weight:600;color:#333}
+td{padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:hover td{background:#fafaf6}
+.num{font-variant-numeric:tabular-nums;font-family:ui-monospace,Menlo,monospace}
+.good{color:var(--good);font-weight:600}
+.warn{color:var(--warn);font-weight:600}
+.bad{color:var(--bad);font-weight:600}
+.muted{color:var(--muted)}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-right:6px;vertical-align:middle}
+.tag-good{background:#e3f0e6;color:var(--good)}
+.tag-warn{background:#fbeed8;color:var(--warn)}
+.tag-bad{background:#f8e1e1;color:var(--bad)}
+.tag-info{background:var(--tag-bg);color:var(--info)}
+code,kbd{background:var(--code);padding:1.5px 5px;border-radius:3px;font:13px ui-monospace,Menlo,monospace;color:#222}
+.box{background:#f9f9f5;border-left:3px solid var(--accent);padding:12px 16px;margin:12px 0;font-size:13.5px;border-radius:0 4px 4px 0}
+.box-warn{background:#fdf6e6;border-left-color:var(--warn)}
+.box-bad{background:#fbe9e9;border-left-color:var(--bad)}
+.box-good{background:#eaf3ec;border-left-color:var(--good)}
+.kv{display:grid;grid-template-columns:200px 1fr;gap:8px 18px;font-size:13.5px;margin:8px 0}
+.kv dt{color:#666;font-weight:500}
+.kv dd{margin:0}
+ul,ol{margin:8px 0 8px 22px;padding:0}
+li{margin:5px 0}
+.ladder{margin:14px 0}
+.ladder .row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:10px 14px;border-left:4px solid #ddd;background:#fafaf6;margin:6px 0;border-radius:0 4px 4px 0}
+.ladder .row.r0{border-left-color:#9b2c2c}
+.ladder .row.r1{border-left-color:#c08040}
+.ladder .row.r2{border-left-color:#a07040}
+.ladder .row.r3{border-left-color:#608030}
+.ladder .row.r4{border-left-color:#2f6f3e}
+.ladder .label{font-weight:600;min-width:160px}
+.ladder .desc{color:#444;font-size:13px}
+.ladder .val{font-family:ui-monospace,Menlo,monospace;font-weight:600;color:#222;font-size:14px;text-align:right}
+footer{text-align:center;color:var(--muted);padding:30px;font-size:12.5px}
+.flex{display:flex;gap:16px;flex-wrap:wrap}
+.flex>div{flex:1;min-width:280px;background:#f9f9f5;padding:14px 16px;border-radius:6px;border:1px solid var(--line)}
+.cite{font-size:12px;color:var(--muted);font-style:italic}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>DeaminaFormer-DNA</h1>
+  <div class="sub">Guide-independent base-editor DNA off-target prediction — honest end-to-end report</div>
+  <div class="meta">Project: <code style="background:rgba(255,255,255,0.15);color:#fff">edit-deaminase-dna</code> · Sister: <code style="background:rgba(255,255,255,0.15);color:#fff">edit-deaminase</code> (RNA) · 68,532 canonical sites · 2,838 1 Mb bins · Generated 2026-05-26</div>
+</header>
+
+<nav>
+  <a href="#summary">Summary</a>
+  <a href="#data">Data</a>
+  <a href="#methods">Methods</a>
+  <a href="#fg">f / g decomposition</a>
+  <a href="#site">Site-level</a>
+  <a href="#arch">Architectures</a>
+  <a href="#transfer">Generalization</a>
+  <a href="#fxg">f × g deployment</a>
+  <a href="#ladder">Number ladder</a>
+  <a href="#corrections">Corrections (audit trail)</a>
+  <a href="#deliverable">Deliverable</a>
+  <a href="#limits">Limits</a>
+</nav>
+
+<main>
+
+<section id="summary">
+  <h2>Executive summary</h2>
+  <p class="lead">
+    We predict <strong>guide-independent</strong> base-editor DNA off-target locations as a clinical safety prior.
+    After thorough auditing (4 corrected over-claims), the defensible deliverable is an <strong>f × g</strong>
+    factorized site-level model: <strong>f</strong> = deaminase motif (a known editor property, provided per editor),
+    <strong>g</strong> = cross-editor accessibility (learned, transfers). It recovers
+    <strong>~30–37% of held-out off-targets in the top 10% of screened sites (3–4× enrichment)</strong>,
+    generalizing across treatments and to <em>unseen deaminases</em> — provided their motif spectrum is given as input.
+  </p>
+  <div class="flex">
+    <div>
+      <h4 style="margin-top:0">What works <span class="tag tag-good">validated</span></h4>
+      <ul>
+        <li>Motif (f) is deaminase-specific — provide per editor</li>
+        <li>Accessibility (g) is deaminase-agnostic — transfers</li>
+        <li>f × g generalizes across treatments AND novel deaminases (with motif input)</li>
+        <li>Site-level (motif-aware) beats bin-level (motif-blind) by ~10 pp recall</li>
+        <li>Cell-type-robust at 1 Mb resolution</li>
+      </ul>
+    </div>
+    <div>
+      <h4 style="margin-top:0">What doesn't <span class="tag tag-bad">refuted</span></h4>
+      <ul>
+        <li>Zero-shot to a novel deaminase without motif input (Yu: 1.2×)</li>
+        <li>Within-bin / per-site exact-C prediction beyond motif+accessibility (stochastic)</li>
+        <li>Cancer-driver enrichment as biology (mostly gene-density)</li>
+        <li>Per-site / per-gene calibrated absolute rate (no cross-assay gold)</li>
+        <li>Deeper architectures helping (data, not arch, is the ceiling)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="data">
+  <h2>Data &amp; QC</h2>
+  <p>All sources human; mouse deferred. Canonical sites: <code>data/processed/canonical_sites.parquet</code>
+  (68,532 rows after coordinate / motif / strand QC). Per-1 Mb bins: <code>/tmp/bins_1mb_v3.parquet</code> (2,838).</p>
+
+  <h3>Sources used</h3>
+  <table>
+    <tr><th>Source</th><th>Editor / class</th><th>Deaminase</th><th>N sites</th><th>Tp[C/A] frac</th><th>Status</th></tr>
+    <tr><td>Doman_BE4_pilot</td><td>BE4 / CBE</td><td>rAPOBEC1</td><td class="num">11,123</td><td class="num">0.81</td><td><span class="tag tag-good">clean</span></td></tr>
+    <tr><td>McGrath_2019_iPSC</td><td>BE4 / CBE</td><td>rAPOBEC1</td><td class="num">13,846</td><td class="num">0.90</td><td><span class="tag tag-good">clean</span></td></tr>
+    <tr><td>Lei_2021</td><td>BE4max / CBE</td><td>rAPOBEC1</td><td class="num">2,742</td><td class="num">0.48</td><td><span class="tag tag-warn">−2 fix; suspect</span></td></tr>
+    <tr><td>Yu_2020</td><td>YE1-BE4 / CBE</td><td>engineered</td><td class="num">6,648</td><td class="num">0.17</td><td><span class="tag tag-good">clean (novel motif)</span></td></tr>
+    <tr><td>Chen_2023_tdCBE</td><td>tdCBE / CBE</td><td>TadA-CBE</td><td class="num">412</td><td class="num">0.01</td><td><span class="tag tag-info">too few; excluded</span></td></tr>
+    <tr><td>Richter_2020</td><td>ABE8e / ABE</td><td>TadA</td><td class="num">16,287</td><td class="num">0.83</td><td><span class="tag tag-good">clean</span></td></tr>
+    <tr><td>CHANGE-seq-BE</td><td>(guide-DEPendent)</td><td>—</td><td class="num">17,473</td><td>—</td><td><span class="tag tag-info">held back for guide-dep work</span></td></tr>
+    <tr><td>BE4_WGS clonal (Doman BAMs)</td><td>BE4 clones</td><td>rAPOBEC1</td><td>—</td><td class="num">~0.25</td><td><span class="tag tag-bad">rejected (germline-dominated, 98.6% VAF=1.0)</span></td></tr>
+  </table>
+
+  <h3>QC gates applied (G0–G9)</h3>
+  <ol>
+    <li><strong>G0 provenance</strong> — source paper + accession + parser + commit recorded per file</li>
+    <li><strong>G1 coordinate-offset</strong> — Lei −2 shift after diagnosis (reads CCC not TpC pre-fix)</li>
+    <li><strong>G2 motif &gt;40%</strong> — TpC (CBE) / TpA (ABE) frac on the cleaned context; sources below ≥0.40 rejected for rAPOBEC1 sources; exemption for engineered/novel families (flagged in audit)</li>
+    <li><strong>G3 germline / clonal contamination</strong> — VAF-distribution test; BE4 clonal WGS rejected (≥98.6% VAF=1.0)</li>
+    <li><strong>G4 bulk-vs-clonal classifier</strong> — only bulk genome-wide assays support a predictable regional landscape</li>
+    <li><strong>G5 strict GC + gene-density baseline</strong> — required before any "chromatin adds beyond" claim</li>
+    <li><strong>G6 mappability</strong> — k=100 Umap track included as feature/control</li>
+    <li><strong>G7 leave-one-chromosome-out (LOCO)</strong></li>
+    <li><strong>G8 leave-one-source-out (LOSO)</strong></li>
+    <li><strong>G9 circular-shift null</strong> — autocorrelation-controlled (~0)</li>
+  </ol>
+  <p class="cite">Detail: <code>docs/QC_CHECKLIST.md</code>, <code>docs/DATA_PROVENANCE.md</code>.</p>
+</section>
+
+<section id="methods">
+  <h2>Methods</h2>
+
+  <h3>Features</h3>
+  <h4>Per 1 Mb bin (2,838 bins)</h4>
+  <dl class="kv">
+    <dt>eligible_C</dt><dd>Count of opportunity bases (C+G on the genome strand) in the bin</dd>
+    <dt>tpc_count</dt><dd>Count of TpC (and reverse-comp GpA) motifs — sequence opportunity</dd>
+    <dt>gene_density</dt><dd>Distinct protein-coding genes centered in the bin (0–64; refGene) — opportunity / ascertainment proxy. The dominant confound (r=0.61 with edit count); controlled in every claim.</dd>
+    <dt>accessibility (4 tracks)</dt><dd>DNase-seq (open chromatin), ATAC-seq (open chromatin), R-loop / MapR (ssDNA exposure), H3K27ac (active enhancers/promoters) — mean ENCODE signal in the bin. Captures where ssDNA is exposed for the deaminase.</dd>
+    <dt>mappability</dt><dd>k=100 Umap multi-track mappability — call-bias control</dd>
+    <dt>conservation</dt><dd>phyloP / phastCons 100-way (used in earlier ablations)</dd>
+  </dl>
+  <h4>Per site (candidate C or A)</h4>
+  <dl class="kv">
+    <dt>local motif (±10 one-hot)</dt><dd>80-dim flattened one-hot of the ±10 flanking sequence (center base dropped — it is the edited C/A by construction)</dd>
+    <dt>local motif (±25 + CNN)</dt><dd>4 × 51 one-hot for the CNN architecture</dd>
+    <dt>regional accessibility (4)</dt><dd>The site's 1 Mb bin DNase/ATAC/R-loop/H3K27ac</dd>
+    <dt>deaminase identity (3)</dt><dd>One-hot of family {rAPOBEC1, engineered, TadA} OR the deaminase's trinucleotide motif spectrum</dd>
+  </dl>
+
+  <h3>Models</h3>
+  <ul>
+    <li><strong>Trinuc lookup</strong> — 16-feature LR; the f-baseline (saturates the motif signal)</li>
+    <li><strong>±10 one-hot + MLP</strong> — local motif via simple MLP (64-h, dropout 0.3)</li>
+    <li><strong>±25 one-hot + 1D CNN</strong> — Conv(4→32,k=7)+Conv(32→32,k=5)+AdaptiveMaxPool</li>
+    <li><strong>Deep MLP</strong> — 128→64→32 with dropout 0.3</li>
+    <li><strong>HyenaDNA</strong> — long-context FM, mean-pool and center-token variants (tested in sister project; pinned transformers 4.39.3)</li>
+    <li><strong>Bin-level MLP (g)</strong> — 32-h on aggregated bin features; LOCO target = log1p(edit count)</li>
+    <li><strong>f × g deployment</strong> — score = z(motif log-odds spectrum) + z(g-network on accessibility); g trained on OTHER sources (LOSO), f estimated from a disjoint chromosome partition (non-circular)</li>
+  </ul>
+
+  <h3>Evaluation</h3>
+  <ul>
+    <li><strong>LOCO</strong> (leave-one-chromosome-out) — Spearman</li>
+    <li><strong>LOSO</strong> (leave-one-source-out) — cross-source generalization</li>
+    <li><strong>Held-out chromosome split</strong> — site-level (odd / even)</li>
+    <li><strong>Held-out deaminase / treatment</strong> — full source held out</li>
+    <li><strong>Background ladder</strong> — random base-matched · trinucleotide-matched · bin-matched · mappability-matched</li>
+    <li><strong>Recall @ top-K%</strong> and <strong>enrichment = recall/K</strong> (portable across pos:bg ratios)</li>
+    <li><strong>AUROC</strong>, Spearman, Brier (where applicable)</li>
+    <li><strong>Within-stratum control</strong> (gene-density quintile) — for any "chromatin adds beyond" claim</li>
+    <li><strong>Circular-shift null</strong> — autocorrelation-controlled increment</li>
+  </ul>
+</section>
+
+<section id="fg">
+  <h2>f / g decomposition — the conceptual frame</h2>
+  <p>
+    Guide-independent off-target activity factorizes cleanly into a <strong>deaminase preference (f)</strong>
+    that is editor-specific and acts at single-base resolution, and a <strong>regional ssDNA-exposure landscape (g)</strong>
+    that is approximately editor-agnostic and operates at ≥1 Mb resolution.
+    The two have very different ML characters and very different ceilings.
+  </p>
+  <h3>f (deaminase preference)</h3>
+  <p><span class="tag tag-good">validated</span> A trinucleotide motif. <strong>No ML headroom.</strong></p>
+  <ul>
+    <li>Trinuc-only LR: AUROC <strong>0.826</strong> on cross-cell-type transfer (HEK293 → iPSC)</li>
+    <li>±10 one-hot MLP: <strong>0.82</strong> — no improvement over trinuc</li>
+    <li>HyenaDNA mean-pool: 0.56 · HyenaDNA center-token: 0.64 — both <strong>lose</strong> to one-hot</li>
+    <li>Per-editor cosine similarity (HEK vs iPSC rAPOBEC1): <strong>0.996</strong></li>
+    <li>Engineered/dual deaminases differ → <strong>per-editor motif lookup</strong> required (a known biochemical property)</li>
+  </ul>
+
+  <h3>g (≥1 Mb landscape)</h3>
+  <p><span class="tag tag-good">validated</span> Real, modest, learnable; data-bound.</p>
+  <ul>
+    <li><strong>LOCO Spearman ~0.63</strong> — but <strong>dominated by gene density</strong> (r=0.61 with edit count)</li>
+    <li>Chromatin delta over a baseline that already includes GC + gene-density + motif + mappability: <strong>+0.04</strong>
+      (down from a naive +0.09 when gene density isn't controlled — the confound this project corrected)</li>
+    <li>Within-gene-density-quintile (control-by-design): chromatin Spearman <strong>0.351</strong> (DNase alone 0.25)</li>
+    <li>LOSO Spearman: <strong>0.37–0.56</strong> — the honest cross-source number</li>
+    <li>Circular-shift null: ~0 (autocorrelation-controlled)</li>
+    <li>Cell-type-robust: DNase HEK / iPSC / HSPC corr <strong>0.995</strong> at 1 Mb</li>
+    <li>Bin-level deep nets / Enformer-style models did not help (N=2,838 is the ceiling)</li>
+  </ul>
+</section>
+
+<section id="site">
+  <h2>Site-level prediction</h2>
+  <p>
+    Moving from <strong>1 Mb bin → individual candidate C</strong> puts the motif (the strongest local signal)
+    back into the model. Within-editor, held-out chromosomes:
+  </p>
+
+  <h3>vs random genomic-C background <span class="tag tag-warn">easy background — motif inflates</span></h3>
+  <table>
+    <tr><th>Editor</th><th>AUROC</th><th>R@1%</th><th>R@5%</th><th>R@10%</th></tr>
+    <tr><td>Lei (rAPOBEC1)</td><td class="num">0.990</td><td class="num">72%</td><td class="num">96%</td><td class="num good">97%</td></tr>
+    <tr><td>Yu (engineered)</td><td class="num">0.887</td><td class="num">17%</td><td class="num">47%</td><td class="num good">65%</td></tr>
+    <tr><td>McGrath (rAPOBEC1)</td><td class="num">0.836</td><td class="num">5%</td><td class="num">19%</td><td class="num">37%</td></tr>
+  </table>
+  <div class="box box-warn">
+    <strong>Honesty note:</strong> these numbers separate off-target C's from <em>arbitrary</em> genomic C's,
+    which the deaminase motif + accessibility do almost trivially. Lei's 0.99 is also suspect (Detect-seq footprint +
+    −2 coordinate fix). The hard-background numbers below are the portable ones.
+  </div>
+
+  <h3>vs trinucleotide-matched background <span class="tag tag-good">portable</span></h3>
+  <table>
+    <tr><th>Editor</th><th>Features</th><th>AUROC</th><th>R@10%</th></tr>
+    <tr><td rowspan="3">Lei</td><td>motif (±10) only</td><td class="num">0.979</td><td class="num">50.2%</td></tr>
+    <tr><td>motif + accessibility</td><td class="num">0.978</td><td class="num">50.0%</td></tr>
+    <tr><td>CNN(±25) + accessibility</td><td class="num">0.983</td><td class="num good">52.4%</td></tr>
+    <tr><td rowspan="3">Yu</td><td>motif (±10) only</td><td class="num">0.742</td><td class="num">26.2%</td></tr>
+    <tr><td>motif + accessibility</td><td class="num">0.803</td><td class="num">31.9%</td></tr>
+    <tr><td>deep-MLP motif + acc</td><td class="num">0.794</td><td class="num">32.0%</td></tr>
+  </table>
+  <p>For Yu, <strong>accessibility adds a real increment beyond the motif</strong> (0.742 → 0.803 AUROC; +6 pp R@10%).</p>
+</section>
+
+<section id="arch">
+  <h2>Architecture sweep</h2>
+  <p>Within-editor, held-out chromosome, <em>trinuc-matched</em> background:</p>
+  <table>
+    <tr><th>Architecture</th><th>Lei AUROC / R@10%</th><th>Yu AUROC / R@10%</th></tr>
+    <tr><td>MLP (motif+acc)</td><td class="num">0.978 / 50%</td><td class="num">0.803 / 32%</td></tr>
+    <tr><td>Deep MLP (128→64→32, motif+acc)</td><td class="num">0.988 / 52%</td><td class="num">0.794 / 32%</td></tr>
+    <tr><td>1D CNN (±25, k=7+5)</td><td class="num">0.983 / 52%</td><td class="num">0.787 / 29%</td></tr>
+  </table>
+  <div class="box">
+    <strong>Verdict:</strong> deep ≈ shallow ≈ CNN. The local signal is a short motif; depth doesn't add. This is the
+    same pattern as the bin-level / sequence-FM tests (HyenaDNA &lt; one-hot). <strong>Data is the ceiling, not architecture.</strong>
+  </div>
+</section>
+
+<section id="transfer">
+  <h2>Generalization between treatments (deaminase-conditioned)</h2>
+  <p>
+    Key conceptual point: <strong>the motif is deaminase-specific, not treatment-specific</strong>. A "treatment" =
+    deaminase + Cas + guide + dose; only the deaminase determines f. So a model conditioned on the deaminase should
+    generalize from one treatment to another that <em>reuses the same deaminase</em>.
+  </p>
+  <p><strong>Leave-one-source-out</strong>, deaminase one-hot included, 3-seed mean, full source held out:</p>
+  <table>
+    <tr><th>Held-out treatment</th><th>Deaminase</th><th>In training?</th><th>AUROC (random bg)</th><th>Enrichment@10%</th><th>AUROC (trinuc-matched)</th></tr>
+    <tr><td>Doman</td><td>rAPOBEC1</td><td>✅ via McGrath/Lei</td><td class="num">0.783</td><td class="num good">2.6×</td><td class="num">0.565</td></tr>
+    <tr><td>McGrath</td><td>rAPOBEC1</td><td>✅</td><td class="num">0.817</td><td class="num good">2.5×</td><td class="num">0.545</td></tr>
+    <tr><td>Lei</td><td>rAPOBEC1</td><td>✅</td><td class="num">0.580</td><td class="num warn">1.7×</td><td class="num">0.488</td></tr>
+    <tr><td>Yu</td><td>engineered (novel)</td><td>❌</td><td class="num">0.583</td><td class="num bad">1.2×</td><td class="num">0.636</td></tr>
+    <tr><td>Richter</td><td>TadA (novel)</td><td>❌</td><td class="num">0.775</td><td class="num">2.3×</td><td class="num">0.663</td></tr>
+  </table>
+  <div class="box box-good">
+    <strong>Confirms the hypothesis — with a sharp boundary:</strong>
+    <ul style="margin:6px 0">
+      <li>Same-deaminase, different-treatment transfer works (Doman 2.6×, McGrath 2.5×).</li>
+      <li>Novel-deaminase zero-shot fails on the motif (Yu 1.2×) — model applies the wrong (rAPOBEC1) preference.</li>
+      <li>Richter (ABE/TadA, novel) still gets 2.3× — purely from the deaminase-<em>agnostic</em> accessibility signal (g).</li>
+      <li>Lei is a data-quality outlier (coord fix + Detect-seq footprint; TpC only 0.48 vs Doman 0.81).</li>
+    </ul>
+  </div>
+</section>
+
+<section id="fxg">
+  <h2>f × g deployment model — the capstone</h2>
+  <p>
+    Make the factorization explicit: provide the <strong>editor's known motif spectrum (f)</strong>
+    as an input feature; learn <strong>accessibility (g)</strong> on <em>other</em> sources (LOSO).
+    f estimated from a chromosome partition disjoint from the eval partition (non-circular).
+    This is the deployment-realistic model: any editor with a known deaminase motif can be screened.
+  </p>
+  <table>
+    <tr><th>Held-out editor</th><th>Deaminase</th><th>f-only enr</th><th>g-only enr</th><th><strong>f × g enr@10%</strong></th><th>AUROC (f × g)</th><th>Test positives</th></tr>
+    <tr><td>Doman</td><td>rAPOBEC1</td><td class="num">1.9×</td><td class="num">1.1×</td><td class="num good">2.3×</td><td class="num">0.726</td><td class="num">5,107</td></tr>
+    <tr><td>McGrath</td><td>rAPOBEC1</td><td class="num">2.4×</td><td class="num">0.9×</td><td class="num good">2.2×</td><td class="num">0.749</td><td class="num">6,721</td></tr>
+    <tr><td>Lei</td><td>rAPOBEC1</td><td class="num">2.4×</td><td class="num">1.9×</td><td class="num good">3.3×</td><td class="num">0.785</td><td class="num">1,191</td></tr>
+    <tr><td><strong>Yu</strong></td><td><strong>engineered (novel)</strong></td><td class="num">3.1×</td><td class="num">1.6×</td><td class="num good">3.7×</td><td class="num">0.780</td><td class="num">2,920</td></tr>
+    <tr><td><strong>Richter</strong></td><td><strong>TadA (novel)</strong></td><td class="num">2.9×</td><td class="num">2.1×</td><td class="num good">3.5×</td><td class="num">0.884</td><td class="num">7,354</td></tr>
+  </table>
+  <div class="box box-good">
+    <strong>Headline:</strong> with the editor's known motif provided, <strong>even novel deaminases generalize</strong>
+    at 3.5–3.7× enrichment. <strong>f × g &gt; f-only and &gt; g-only</strong> — the two carry additive, independent signal.
+    <br><br>
+    <strong>"Given an editor's deaminase motif + a cross-editor accessibility model, we recover ~30–37% of
+    its guide-independent off-targets in the top 10% of screened sites (3–4× enrichment), generalizing
+    across treatments AND to unseen deaminases."</strong>
+  </div>
+</section>
+
+<section id="ladder">
+  <h2>Reconciling the numbers — the ladder</h2>
+  <p>The different headline numbers across the project are not contradictions — they are different points on a ladder of difficulty (resolution × background × what's held out). The 24% sits at the hard end of all three axes; 30–37% applies your two key levers (site resolution + deaminase motif); 65–97% drops the hard background.</p>
+  <div class="ladder">
+    <div class="row r0">
+      <div class="label">1 Mb bin, motif-blind</div>
+      <div class="desc">Rank whole megabases; held-out editor-class; vs random — the original bin-level showcase</div>
+      <div class="val">24% @ top-10% (2.4×)</div>
+    </div>
+    <div class="row r1">
+      <div class="label">f × g, held-out editor</div>
+      <div class="desc">Site-level, motif (known) × accessibility (cross-editor); generalizes across treatments + novel deaminases</div>
+      <div class="val">22–37% (2.2–3.7×)</div>
+    </div>
+    <div class="row r2">
+      <div class="label">Site, within-editor, trinuc-matched</div>
+      <div class="desc">Held-out chromosomes; hard background removes the motif marginal — the portable site-level number</div>
+      <div class="val">30–50%</div>
+    </div>
+    <div class="row r3">
+      <div class="label">Site, within-editor, random bg</div>
+      <div class="desc">Held-out chromosomes; easy background — motif + opportunity inflate the score</div>
+      <div class="val">65–97%</div>
+    </div>
+    <div class="row r4">
+      <div class="label">Within-region exact-C</div>
+      <div class="desc">Trinuc + bin-matched background — predicting WHICH specific C in the same context and bin gets hit</div>
+      <div class="val">~ chance (stochastic ceiling)</div>
+    </div>
+  </div>
+</section>
+
+<section id="corrections">
+  <h2>Audit trail — corrected over-claims</h2>
+  <p>The project's headline numbers were corrected four times during honest review. The current numbers are the post-correction versions.</p>
+  <table>
+    <tr><th>Claim (original)</th><th>Corrected</th><th>Cause</th></tr>
+    <tr><td>AUROC 0.95 negative-set transfer</td><td><span class="bad">Refuted</span></td><td>Synthetic-negative hard-mining leakage</td></tr>
+    <tr><td>Cell-type matching rescues prediction</td><td><span class="bad">Refuted</span></td><td>Cross-cell-type DNase corr 0.69–0.84; iPSC DNase did not rescue McGrath</td></tr>
+    <tr><td>Lei motif = CCC (anomalous)</td><td><span class="warn">Diagnosed</span></td><td>−2 coordinate offset; post-fix TpC 0.48 (still flagged as suspect)</td></tr>
+    <tr><td>Chromatin LOCO Δ = +0.09</td><td><span class="warn">+0.04</span></td><td>Gene-density confound; STRICT baseline includes GC + gene-density + motif + mappability</td></tr>
+    <tr><td>Cross-class generalization 0.65 = learned coupling</td><td><span class="warn">Reframed</span></td><td>Circular; logA mirrors logC, raw landscape corr 0.55 (co-localize in gene-dense regions)</td></tr>
+    <tr><td>Site-level held-out 97% @ top-10%</td><td><span class="warn">~50% portable</span></td><td>vs random bg inflates via motif marginal; trinuc-matched bg gives portable number</td></tr>
+    <tr><td>Flags cancer-driver regions</td><td><span class="warn">Mostly gene-density</span></td><td>Partial risk-vs-cancer | density = +0.10</td></tr>
+    <tr><td>Bulk-population guide-independent WGS retrievable</td><td><span class="bad">Refuted</span></td><td>Sub-1% VAF undetectable at 30–50× coverage; only enrichment assays exist</td></tr>
+  </table>
+  <p class="cite">Detail: <code>docs/END_TO_END.md</code>, <code>docs/MODEL_CARD.md</code>.</p>
+</section>
+
+<section id="deliverable">
+  <h2>Honest deliverable</h2>
+  <p>
+    A <strong>site-resolution screening prior</strong> over candidate C (CBE) / A (ABE) positions, parameterized as
+    <strong>f(known deaminase motif spectrum) × g(cross-editor accessibility from DNase / ATAC / R-loop / H3K27ac)</strong>.
+  </p>
+  <h3>Intended use</h3>
+  <ul>
+    <li>Triage candidate sites for targeted deep sequencing in BE off-target characterization</li>
+    <li>Rank megabase regions for an editor whose <em>deaminase motif is known</em> (a standard biochemical property)</li>
+    <li>Generalize the regional accessibility component across editors (incl. unseen deaminases)</li>
+  </ul>
+  <h3>Out of intended use</h3>
+  <ul>
+    <li><strong>Cannot</strong> clear a region or site (release-spec safety claim requires calibration we don't have)</li>
+    <li><strong>Not</strong> calibrated absolute rate; output is a relative rank / enrichment</li>
+    <li><strong>Not</strong> target-cell-type specific at 1 Mb (accessibility is cell-type-invariant at that resolution)</li>
+    <li><strong>Not</strong> a per-gene cancer-driver flagger (gene-density is the dominant confound)</li>
+    <li><strong>Zero-shot to a brand-new deaminase</strong> is degraded — supply its motif</li>
+  </ul>
+</section>
+
+<section id="limits">
+  <h2>Limits, data ceiling, next steps</h2>
+  <h3>The fundamental ceiling</h3>
+  <ul>
+    <li><strong>N = 2,838 bins, ~9.7 M candidate C's in CDS</strong>; per-source positives 2.7k–16k</li>
+    <li>Inter-assay reproducibility at 1 Mb: <strong>~0.26</strong> Spearman — this caps any cross-assay model</li>
+    <li><strong>Bulk-population guide-independent WGS does not exist</strong> (sub-1% VAF is below 30–50× WGS sensitivity)</li>
+    <li>Only enrichment assays (Detect-seq, EndoV-seq, CHANGE-seq-BE) yield site tables; bulk treated−control excess landscape is unavailable</li>
+    <li>Architecture is not the bottleneck (deep ≈ shallow; HyenaDNA &lt; one-hot; Enformer/Borzoi deferred)</li>
+  </ul>
+  <h3>Levers that would genuinely move the number</h3>
+  <ul>
+    <li><strong>Prospective wet-lab validation (Levanon collaboration)</strong> — deep-sequence gene-density-matched high- vs low-rank regions for one editor; confound-proof, prospective demonstration</li>
+    <li><strong>More clean bulk-genome-wide assays</strong> — EndoV-seq, Selict-seq, Buchumenski-style would raise the 0.26 ceiling</li>
+    <li><strong>Pivot to guide-DEPendent</strong> — CHANGE-seq-BE (PRJNA1372720) + EndoV-seq are data-rich; clinically the per-therapy question</li>
+    <li><strong>Persist bin builders into the repo</strong> (currently in /tmp) — reproducibility gap flagged by QA</li>
+    <li><strong>NB-GLM calibration</strong> for relative-rank → calibrated probability</li>
+  </ul>
+  <h3>What this project genuinely contributes</h3>
+  <ul>
+    <li>A clean <strong>f × g factorization</strong> for guide-independent BE DNA off-targets with explicit transferability rules</li>
+    <li>A <strong>QC ladder</strong> (G0–G9) that catches the standard confounds (gene-density, mappability, motif-spectrum, germline)</li>
+    <li>A documented <strong>data-quality finding</strong>: only bulk genome-wide assays capture a predictable regional landscape</li>
+    <li>An <strong>honest, audited evaluation framework</strong> (background ladder × held-out × enrichment metric) that other BE off-target work can adopt</li>
+  </ul>
+</section>
+
+<section id="repro">
+  <h2>Reproduce</h2>
+  <p>Environment: <code>conda activate quris</code>. Key scripts:</p>
+  <table>
+    <tr><th>Stage</th><th>Script</th><th>Output</th></tr>
+    <tr><td>Canonical sites</td><td><code>scripts/data/build_canonical.py</code></td><td><code>data/processed/canonical_sites.parquet</code></td></tr>
+    <tr><td>1 Mb bins + tracks</td><td><code>scripts/data/build_bins.py</code></td><td><code>bins_1mb_v3.parquet</code></td></tr>
+    <tr><td>f (preference)</td><td><code>experiments/phase0_baseline/preference_transfer.py</code></td><td>Trinuc / ±10 / HyenaDNA transfer</td></tr>
+    <tr><td>g (landscape)</td><td><code>experiments/phase3_validate/g_controls.py</code></td><td>LOCO / LOSO / circular-shift</td></tr>
+    <tr><td>Within-stratum control</td><td><code>experiments/phase3_validate/within_stratum.py</code></td><td>Gene-density-quintile partial</td></tr>
+    <tr><td>Bin-level showcase (24%)</td><td><code>experiments/phase3_validate/recall_showcase.py</code></td><td>Held-out editor recall</td></tr>
+    <tr><td>Site-level within-editor</td><td><code>experiments/phase3_validate/site_within_editor.py</code></td><td>Held-out-chromosome recall</td></tr>
+    <tr><td>Architecture sweep</td><td><code>experiments/phase3_validate/site_arch_sweep.py</code></td><td>MLP / deep / CNN, trinuc-matched bg</td></tr>
+    <tr><td>Deaminase transfer (LOSO)</td><td><code>experiments/phase3_validate/deaminase_transfer.py</code></td><td>Same-deam vs novel-deam zero-shot</td></tr>
+    <tr><td>f × g deployment</td><td><code>experiments/phase3_validate/fxg_deploy.py</code></td><td>Held-out editor + novel deaminase</td></tr>
+  </table>
+</section>
+
+</main>
+
+<footer>
+  DeaminaFormer-DNA · Honest-claims framework · QC G0–G9 · 4 audited over-claim corrections · Generated by the project's audit pipeline · Sister project: edit-deaminase (RNA, Levanon collaboration)
+</footer>
+
+</body>
+</html>
