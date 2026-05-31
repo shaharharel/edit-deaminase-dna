@@ -60,11 +60,14 @@ b = pd.read_parquet(BINS_PARQUET)
 for col in ['dnase','atac','rloop','h3k27ac']:
     if col not in b.columns:
         raise SystemExit(f"bins file missing column {col}")
+# QA-H7: bin column should be an integer index (0..~250), NOT a coordinate.
+assert b['bin'].max() < 1000, f"bins file 'bin' column appears to be a coordinate (max={b['bin'].max()}), not a 1Mb integer index"
 g_arr = b[['dnase','atac','rloop','h3k27ac']].values
 mu = np.nanmean(g_arr, 0); sd = np.nanstd(g_arr, 0) + 1e-6
 g_arr_z = (g_arr - mu) / sd
 g_score = g_arr_z.mean(axis=1)  # composite g per bin
 acc = {(r.chrom, int(r.bin)): g_score[i] for i,r in enumerate(b.itertuples())}
+print(f"loaded {len(acc):,} 1Mb bins with accessibility composite", file=sys.stderr)
 
 # --- 3) score every CDS TpC site, aggregate per gene ---
 per_gene_f = defaultdict(list)

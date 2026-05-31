@@ -41,26 +41,42 @@ npc_rows = []
 per_gene_tpc = defaultdict(int)
 per_gene_npc = defaultdict(int)
 
+# PERF FIX: load each chromosome ONCE, sort refGene rows by chrom so we
+# don't re-load the chromosome FASTA per transcript (was loading hundreds
+# of times — O(N_tx * chrom_len) ~ 70k * 200M for chr1 alone, hours).
+rg = rg.sort_values(['chrom','ts']).reset_index(drop=True)
+cur_chrom = None
+seq = None
 for r in rg.itertuples():
-    seq = fa[r.chrom][:].seq.upper()
+    if r.chrom != cur_chrom:
+        seq = fa[r.chrom][:].seq.upper()
+        cur_chrom = r.chrom
+        print(f"  loaded {r.chrom} ({len(seq):,} bp)", file=sys.stderr)
     for a,b in cds_exons(r):
-        s = seq[a:b]
-        for i in range(1, len(s)-1):
-            base = s[i]
+        # QA-H9 fix: index into full chromosome seq so we can check upstream/downstream
+        # bases at exon edges (and exclude CpG from npc since CpG spontaneous deamination
+        # contaminates the motif-negative control).
+        for pos in range(max(a,1), min(b, len(seq)-1)):
+            base = seq[pos]
+            up = seq[pos-1]
+            dn = seq[pos+1]
             if base == 'C':
-                upstream = s[i-1]
-                pos = a + i  # 0-based
-                if upstream == 'T':
+                # CpG on + strand: C with G downstream -> exclude (spontaneous deamination)
+                if dn == 'G':
+                    continue
+                if up == 'T':
                     tpc_rows.append((r.chrom, pos, pos+1, r.name2, 0, '+'))
                     per_gene_tpc[(r.chrom, r.name2)] += 1
                 else:
                     npc_rows.append((r.chrom, pos, pos+1, r.name2, 0, '+'))
                     per_gene_npc[(r.chrom, r.name2)] += 1
             elif base == 'G':
-                # TpC on the reverse strand = GpA on this strand (the C is at this pos on '-' strand)
-                downstream = s[i+1]
-                pos = a + i
-                if downstream == 'A':
+                # The C on the - strand at this position; CpG on - strand means upstream is C on + strand
+                # (i.e. + strand has CG palindrome at pos-1,pos). Exclude.
+                if up == 'C':
+                    continue
+                # TpC on the reverse strand = GpA on this strand
+                if dn == 'A':
                     tpc_rows.append((r.chrom, pos, pos+1, r.name2, 0, '-'))
                     per_gene_tpc[(r.chrom, r.name2)] += 1
                 else:
