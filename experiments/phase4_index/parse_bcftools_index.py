@@ -92,17 +92,21 @@ for c in CH:
     all_T.update(parse_tsv_to_per_pos(be4p, f'BE4 {c}'))
     all_C.update(parse_tsv_to_per_pos(parp, f'Parent {c}'))
 
-# QA-H3 fix: shared whitelist (drop positions where EITHER sample exceeds VAF cap)
-# Also: keep only positions present in BOTH samples (paired comparison)
+# QA-M2 fix: ASYMMETRIC VAF filter. The previous "drop if VAF>cap in EITHER sample" killed
+# real editing at high VAF in BE4 (clonal-expansion can fix editing events at 30-50% VAF in
+# the clone). Now: drop a position iff the CONTROL (Parent) shows any meaningful variant,
+# which indicates germline or pre-existing somatic — not BE-induced. Allow BE4 high VAF.
+# QA-H5 fix: len(all_T) | len(all_C) was bitwise-OR (silent bug); use set union.
 common = set(all_T) & set(all_C)
-dropped_high_vaf = 0; dropped_unpaired = (len(all_T) | len(all_C)) - len(common)
-whitelist = set()
+dropped_unpaired = len(set(all_T) | set(all_C)) - len(common)
+dropped_germline = 0; whitelist = set()
+PARENT_VAF_CAP = 0.05  # Parent-side: any detectable variant => not BE-specific
 for key in common:
-    if all_T[key]['v_main'] > VAF_CAP or all_C[key]['v_main'] > VAF_CAP:
-        dropped_high_vaf += 1
+    if all_C[key]['v_main'] > PARENT_VAF_CAP:
+        dropped_germline += 1
         continue
     whitelist.add(key)
-print(f"\nposition filter: paired={len(common):,} | high-VAF dropped (either side)={dropped_high_vaf:,} | whitelist={len(whitelist):,}", file=sys.stderr)
+print(f"\nposition filter: paired={len(common):,} | dropped (Parent VAF > {PARENT_VAF_CAP})={dropped_germline:,} | whitelist={len(whitelist):,}", file=sys.stderr)
 print(f"unpaired positions dropped: {dropped_unpaired:,}", file=sys.stderr)
 
 # Aggregate per gene (separately for treated and control, separately for TpC vs nonTpC)
