@@ -1,0 +1,41 @@
+=== POC: BE4 DNA editing index (4 BE4 clones vs Parent, hg19) ===
+treated=['BE4_clone1', 'BE4_clone5', 'BE4_clone6', 'BE4_clone7']
+control=['Parent_WGS']
+estimator=POOLED (Levanon: no per-site coverage floor; low-cov sites accumulate)
+PARENT_VAF_CAP=0.05  MIN_POS_PER_GENE=20
+
+sites: covered=15,378,037  kept(after germline)=15,372,384  genes(>= 20 TpC pos)=18,806
+
+--- pooled per-gene rates ---
+Treated TpC rate:    n=18806 mean=6.17e-05 med=4.285e-05 q90=0.0001142
+Control TpC rate:    n=18806 mean=2.718e-05 med=0 q90=9.426e-05
+Treated nonTpC rate: n=18806 mean=6.788e-05 med=5.77e-05 q90=0.0001135
+Control nonTpC rate: n=18806 mean=3.557e-05 med=2.593e-05 q90=8.297e-05
+
+--- DEI (HEADLINE) ---
+DEI_tpc: n=18806 mean=3.453e-05 med=2.9e-05 q90=0.0001028
+DEI_npc (motif-negative control): n=18806 mean=3.231e-05 med=3.146e-05 q90=8.897e-05
+
+--- reproducibility (per-clone per-gene TpC rate, Spearman) ---
+            BE4_clone1  BE4_clone5  BE4_clone6  BE4_clone7
+BE4_clone1       1.000       0.112       0.130       0.156
+BE4_clone5       0.112       1.000       0.124       0.128
+BE4_clone6       0.130       0.124       1.000       0.148
+BE4_clone7       0.156       0.128       0.148       1.000
+mean off-diagonal Spearman: 0.133
+
+--- pre-registered gates ---
+[a] DEI_tpc mean > 0:                 True  (3.45e-05)
+[b] mean(DEI_tpc)/mean(DEI_npc):       1.07x  (>2 convincing, >1.3 weak)
+[c] frac genes DEI_tpc > DEI_npc:      0.475  (>0.70 target)
+[d] frac genes treated TpC > control:  0.656
+
+--- top-100 motif specificity ---
+top-100 DEI_tpc mean: 0.0009826
+top-100 DEI_npc mean: 0.000102
+top-100 ratio: 9.63x
+
+--- burden-capture (precision@K) ---
+  50% of excess TpC edit burden captured by top 1,802 genes (9.6% of genes)
+  80% of excess TpC edit burden captured by top 5,467 genes (29.1% of genes)
+  90% of excess TpC edit burden captured by top 7,767 genes (41.3% of genes)

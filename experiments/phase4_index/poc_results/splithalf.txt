@@ -1,0 +1,12 @@
+=== SPLIT-HALF reproducibility (pool clone1+5 vs clone6+7) ===
+genes compared: 18,801
+DEI_tpc  Spearman=0.412 (p=0.0e+00)  Pearson=0.284
+DEI_corr Spearman=0.470 (p=0.0e+00)
+top-500 overlap Jaccard A vs B: 0.098 (random~0.0266; enrichment 3.7x)
+mean half-B DEI_tpc by half-A quintile (monotone rise = reproducible signal):
+qA
+0   -0.000049
+1    0.000052
+2    0.000036
+3    0.000045
+4    0.000069
