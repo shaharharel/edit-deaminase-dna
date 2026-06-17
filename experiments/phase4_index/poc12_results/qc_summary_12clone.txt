@@ -1,0 +1,44 @@
+=== 12-CLONE CROSS-DEAMINASE DNA EDITING-INDEX POC ===
+positions N=15,666,970; kept(germline)=15,379,625
+
+--- B. BULK pooled C->T rate (TpC channel), per cohort ---
+  Parent : 3.272e-05  (8,937/273,131,932)
+  BE4     : 6.122e-05  (123,477/2,016,982,148)  vs Parent x1.871
+  YE1-BE4 : 4.170e-05  (40,391/968,720,611)  vs Parent x1.274
+  nCas9   : 5.148e-05  (35,575/691,085,152)  vs Parent x1.573
+
+--- D. MOTIF SPECIFICITY: pooled TpC rate / nonTpC rate (>1 = APOBEC-like) ---
+  Parent  : TpC=3.272e-05 nonTpC=4.160e-05  specificity=0.786  (TpC-nonTpC=-8.884e-06)
+  BE4     : TpC=6.122e-05 nonTpC=6.900e-05  specificity=0.887  (TpC-nonTpC=-7.784e-06)
+  YE1-BE4 : TpC=4.170e-05 nonTpC=5.388e-05  specificity=0.774  (TpC-nonTpC=-1.218e-05)
+  nCas9   : TpC=5.148e-05 nonTpC=6.501e-05  specificity=0.792  (TpC-nonTpC=-1.354e-05)
+
+--- A. BE4: per-gene DEI (18,808 genes >= 20 TpC pos) ---
+    mean DEI_tpc=3.064e-05  mean motif-corrected=2.569e-06  frac(DEI_tpc>0)=0.713
+
+--- A. YE1-BE4: per-gene DEI (18,809 genes >= 20 TpC pos) ---
+    mean DEI_tpc=1.007e-05  mean motif-corrected=-3.203e-06  frac(DEI_tpc>0)=0.511
+
+--- A. nCas9: per-gene DEI (18,809 genes >= 20 TpC pos) ---
+    mean DEI_tpc=2.128e-05  mean motif-corrected=-3.102e-06  frac(DEI_tpc>0)=0.503
+
+--- C. SPLIT-HALF within BE4 (clone1,2,3 vs clone5,6,7); 18,803 genes ---
+    DEI_tpc  Spearman=0.452 (p=0.0e+00) Pearson=0.391
+    motif-corrected Spearman=0.545 (p=0.0e+00)
+    top-500 Jaccard A vs B: 0.115 (random~0.0266; enrichment 4.3x)
+    mean half-B DEI_tpc by half-A quintile (monotone rise = reproducible):
+    qA
+    0   -0.000051
+    1    0.000056
+    2    0.000046
+    3    0.000054
+    4    0.000075
+
+--- E. COVERAGE CONFOUND (BE4) ---
+    DEI_tpc(ratio) vs gene size: Spearman=-0.028  (want ~0)
+    edit-COUNT burden vs gene size: Spearman=+0.797  (expect +, confounded)
+
+--- F. BURDEN CONCENTRATION (BE4 excess TpC edits) ---
+    50% burden in top 14.7% genes; 80% in 42.7%; 90% in 59.7%
+
+--- G. per-site table: 15,379,625 sites x 13 cols (chrom,pos,strand,gene,motif + per-cohort ed/tot) -> per_site_labels_12clone.parquet ---
