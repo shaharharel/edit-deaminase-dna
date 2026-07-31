@@ -1,0 +1,29 @@
+[00:51:10] loading published catalog -> rAPOBEC1 trinuc spectrum...
+[00:51:10] published rAPOBEC1 off-targets: 27,711; distinct trinuc: 16
+[00:51:10] loading per-site label table...
+[00:51:10] panel positions: 15,379,625
+[00:51:10] streaming hg19.fa for trinucleotide context (C-centered, edited strand)...
+[00:52:37] well-formed C-centered trinuc: 15,379,624/15,379,625
+[00:52:38] top trinuc by f-score: TCG:+11.79, ACG:+11.56, CCG:+11.42, GCG:+11.32, TCT:+1.47, TCA:+1.05
+[00:52:43] DONE -> enrichment_demo_fonly.txt + site_fscore_fonly.parquet
+
+=== MODEL-GUIDED TARGETED-PANEL ENRICHMENT — f-only (rAPOBEC1 trinucleotide) ===
+panel N=15,379,625 CDS C/G positions; motif spectrum from 27,711 published rAPOBEC1 off-targets (independent of WGS)
+
+GENOME-WIDE pooled C->T rate: BE4=6.707e-05  nCas9=6.161e-05  Parent=3.943e-05
+GENOME-WIDE BE4 DEI (BE4-Parent) = +2.764e-05
+
+--- top-K% model panel vs genome-wide (BE4) and controls ---
+   K%     #sites  #genes     BE4 EI  BE4 fold    BE4 DEI nCas9 fold Parent fold
+  0.1     15,379     208  3.832e-05      0.57 +1.750e-05       0.48        0.53
+  0.5     76,898     974  4.385e-05      0.65 +2.702e-05       0.57        0.43
+  1.0    153,796   1,971  4.977e-05      0.74 +3.245e-05       0.57        0.44
+  5.0    768,981  10,672  4.706e-05      0.70 +2.887e-05       0.57        0.46
+ 10.0  1,537,962  19,000  5.803e-05      0.87 +2.589e-05       0.77        0.82
+
+--- size-matched RANDOM panel control (K=1%), BE4 ---
+  random 1% BE4 fold = 0.98 +/- 0.05  (vs model top-1% above)
+
+--- naive TpC-gate baseline (no ranking): 3,997,913 sites (26.0%) ---
+  BE4 EI(TpC)=6.122e-05  fold=0.91  (model concentrates beyond flat TpC gate)
+
