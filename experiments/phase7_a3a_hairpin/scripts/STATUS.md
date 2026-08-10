@@ -316,3 +316,94 @@ Bulk-vs-clonal and clonal-vs-clonal have different baselines. Always quote an
 editor against a calibrator run in the IDENTICAL configuration - same clonality,
 same number and type of controls. A bulk sample scored against clonal controls
 will reach ~4.9x from population structure alone.
+
+## CORRECTION TO THE EDITOR ENDPOINT (2026-08-10 16:2x)
+
+I had been applying the pre-registered ">=3x over deaminase-free" bar to HAIRPIN
+ENRICHMENT. That bar comes from this project's standing convention, where it means
+BURDEN (editor-specific C>T counts), not enrichment. Applying it to enrichment is
+probably wrong, and would likely have produced a false null.
+
+WHY. A3A-Y130F is an A3A-family editor. If it targets DNA the way endogenous A3A
+does -- which is the hypothesis under test -- its additional mutations should carry
+the SAME hairpin preference (~1.5x). Enrichment is a RATIO, so adding more sites
+with the same preference leaves the ratio near the calibrator's while the COUNT
+rises. Requiring 4.6-4.9x enrichment demands the editor be MORE hairpin-specific
+than endogenous A3A. Nothing predicts that.
+
+CORRECTED ENDPOINTS -- report BOTH, they answer different questions:
+
+  (A) BURDEN  = number of editor-specific sites (alt>=2 in editor, alt==0 in all
+      controls). THIS is where the >=3x bar belongs.
+      Calibrator reference: nCas9-clone1 90,844 specific sites (1 control);
+      nCas9-clone2 73,512 (2 controls). An editor clearing the bar shows roughly
+      220-270k. This tests "does the editor mutate more?"
+
+  (B) HAIRPIN ENRICHMENT among editor-specific sites, quoted against the
+      calibrator's 1.28-1.63x -- with NO 3x expectation. This tests "does the
+      editor target LIKE endogenous A3A?"
+        enrichment ~= calibrator  => editor shares A3A's hairpin preference
+                                     (the hypothesis CONFIRMED, not refuted)
+        enrichment >> calibrator  => editor is MORE hairpin-directed than
+                                     endogenous A3A (would be a strong new claim)
+        enrichment ~= 1.0         => editor mutates without hairpin preference
+                                     (hypothesis REFUTED)
+
+The informative pattern for the hypothesis is therefore (A) high AND (B) close to
+the calibrator -- NOT (B) large. A large (B) with flat (A) would more likely mean
+a configuration or filtering artifact than a real editor effect.
+
+STANDING TRAPS STILL APPLY: bulk-vs-clonal configuration shifts (B) 3x on its own
+(4.941x); control count shifts it only ~3%; the control mask depletes hairpins
+1-2% (conservative). Stratify (B) by trinucleotide context.
+
+## COVERAGE CONFOUND ON THE BURDEN ENDPOINT (2026-08-10 16:5x)
+
+Detection of a low-VAF variant at alt>=2 is steeply coverage-dependent:
+    cov 15 -> P(detect VAF 0.08) = 0.340
+    cov 20 -> 0.483      cov 30 -> 0.704
+    cov 25 -> 0.605      cov 40 -> 0.841      cov 50 -> 0.917
+  ratio cov40/cov20 = 1.74x  -- burden inflation from DEPTH ALONE.
+
+Calibrator median coverage: Parent 30x, nCas9-clone1 24x, nCas9-clone2 24x.
+P66 editor samples were sequenced ~1.4x deeper (123-166 Gbp vs 90-107 Gbp).
+=> a naive cross-study BURDEN comparison shows the editor with substantially more
+   "editor-specific" sites BEFORE any editing occurs.
+
+REQUIRED for endpoint (A) burden -- use (1) as primary, (2) as a check:
+ (1) COVERAGE MATCHING: restrict the comparison to sites where editor and
+     calibrator both fall in the same coverage band. Counts already store per-site
+     cov, so this is a filter, not a re-run.
+ (2) DETECTION-PROBABILITY CORRECTION: divide observed counts by
+     P(alt>=2 | cov, VAF). More efficient but assumes a VAF.
+
+NOTE THIS CUTS AGAINST THE PREVIOUS ENTRY. Burden is the right endpoint for the
+>=3x bar, but it is the endpoint MORE vulnerable to technical confounding.
+ENRICHMENT, being a within-sample ratio, is largely immune to depth (it affects
+numerator and denominator alike). Report BOTH with their distinct failure modes
+stated; do not present either as the safe one.
+
+## NOISE FLOOR ESTABLISHED — s7c validated on two deaminase-free clones (16:5x)
+
+s7c_editor.py implements both endpoints with their distinct confounds handled.
+Validated with nCas9-clone2 as "editor" and nCas9-clone1 as calibrator:
+
+ENDPOINT A -- burden, coverage-matched:
+    cov band     ed/Mb   cal/Mb   ratio
+    (8,15)       151.5    173.9   0.871
+    (15,25)      278.1    316.5   0.879
+    (25,35)      430.1    490.5   0.877
+    (35,60)      650.3    734.3   0.886
+  Raw per-Mb rates vary 4.3x across bands (151->650) -- that IS the coverage
+  confound -- yet the RATIO is flat (0.871-0.886). Coverage matching works; had
+  it failed the ratio would drift with band.
+
+ENDPOINT B -- enrichment: 1.102/1.051, 1.329/1.377, 1.574/1.625 at stem>=6/7/8
+  (editor/calibrator), agreeing within ~5%. Context: TCA 1.728 vs 1.785,
+  TCT 1.404 vs 1.452 at stem>=8.
+
+*** NOISE FLOOR ***
+Two deaminase-free clones differ by ~12% in BURDEN and ~5% in ENRICHMENT.
+Any editor effect must clear those margins. The >=3x burden bar sits far above
+the 12% clone-to-clone floor, so the test is well powered for endpoint A.
+Use s7c_editor.py for the real test -- s7/s7b lack coverage matching.
