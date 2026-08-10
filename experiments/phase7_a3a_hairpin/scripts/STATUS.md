@@ -224,3 +224,95 @@ increment bar, an editor needs ~4.9x at stem>=8 to clear it.
 Had the editor arm been run first, 1.6x could easily have been called an editor
 effect. This surfaced ONLY because the analysis was validated on a case whose
 answer was constrained in advance -- do that for every new analysis.
+
+## CALIBRATOR BASELINE REPLICATED (2026-08-10 11:2x)
+Second independent deaminase-free clone, same control structure the real editor
+test will use (pseudo-editor vs Parent + the other nCas9 clone):
+
+  stem   nCas9-clone1(vs Parent)   nCas9-clone2(vs Parent+nCas9-clone1)
+  >=6    1.051                      1.095
+  >=7    1.377  n=718               1.280  n=539
+  >=8    1.625  n=296               1.531  n=225
+  random baselines 0.968-0.998 throughout
+
+Two independently derived/sequenced/aligned clones agree within ~6%. The baseline
+is replicated, not a single measurement.
+
+Behaviour checks, both correct in direction:
+ - adding a second control cut editor-specific sites 90,844 -> 73,512 (-19%):
+   the filter is stripping shared background as intended;
+ - enrichment fell slightly (1.625 -> 1.531) as shared endogenous A3A background
+   was removed. A RISE would have indicated a problem.
+
+Also established earlier: baseline survives coverage stratification
+(1.31-1.57x across 8-15x / 15-25x / 25-35x / 35x+ bins, n=3.6k-36k per bin), and
+hairpin-specific sites match non-hairpin on VAF (0.0800 vs 0.0769) and coverage
+(27.0 vs 28.0) => endogenous A3A biology, not mappability artifact.
+
+*** FIRM BAR ***
+deaminase-free baseline = 1.28-1.63x at stem>=7/>=8.
+Pre-registered >=3x increment => an editor must reach ~4.6-4.9x at stem>=8.
+Quote every editor number against THIS, never against 1.0.
+
+## REPORTING REQUIREMENT — stratify by trinucleotide context (2026-08-10 12:1x)
+Calibrator hairpin enrichment WITHIN context (nCas9-clone2 vs Parent+nCas9-clone1):
+  ctx  stem>=6   stem>=7   stem>=8   (null 95%CI ~0.8-1.2, p in parens)
+  TCA   1.144     1.345     1.660    (p .001 / <.0001 / <.0001, n_hp 735/297/130)
+  TCT   1.042     1.207     1.379    (p .164 / .0035 / .0025,  n_hp 613/242/95)
+=> the high-stem signal is NOT composition; it survives within both contexts.
+=> effect is STRONGER in TCA (1.66 vs 1.38 at stem>=8) -- the same asymmetry seen
+   in PCAWG, now reproduced independently in HEK293T clones.
+=> the odd sub-1.0 pooled value at stem>=4 (0.947) is a TCT-only effect
+   (TCA 0.993, TCT 0.891); explained, not a worry.
+
+REQUIREMENT: report editor enrichment STRATIFIED BY CONTEXT, not just pooled.
+Specific sites are already 52.2% TCA vs 47.0% background, so a shift in the
+TCA/TCT mix between editor and calibrator could masquerade as an editor effect.
+Tool: s7b_stats.py gives null 95% CI + observed CI + empirical p (2000 draws).
+
+## *** TRAP: THE BASELINE IS CONFIGURATION-DEPENDENT *** (2026-08-10 12:4x)
+Third baseline estimate, Parent (BULK) as pseudo-editor vs BOTH nCas9 clones:
+  stem>=6  1.671  (CI 1.61-1.73, null 0.95-1.04, n_hp 3,311)
+  stem>=7  2.980  (CI 2.85-3.11, null 0.93-1.08, n_hp 2,017)
+  stem>=8  4.941  (CI 4.66-5.22, null 0.87-1.13, n_hp 1,164)
+
+That is 3x the CLONE-based baseline (1.53-1.63x) and lands essentially ON the
+~4.6-4.9x bar set for declaring an editor effect. A CONFIGURATION DIFFERENCE
+ALONE reproduces the entire signal we are looking for.
+
+MECHANISM: Parent is a BULK population; nCas9/D10A/editor samples are SINGLE-CELL
+DERIVED CLONES. Parent-specific sites pool endogenous A3A mutations across many
+lineages, so recurrent hairpin hotspots (hit independently in several lineages)
+accumulate. One clone carries one lineage's history. This is the deterministic
+
+## TRAP: THE BASELINE IS CONFIGURATION-DEPENDENT (2026-08-10 12:4x)
+
+Third baseline estimate, Parent (BULK) as pseudo-editor vs BOTH nCas9 clones:
+
+    stem>=6  1.671  (CI 1.61-1.73, null 0.95-1.04, n_hp 3,311)
+    stem>=7  2.980  (CI 2.85-3.11, null 0.93-1.08, n_hp 2,017)
+    stem>=8  4.941  (CI 4.66-5.22, null 0.87-1.13, n_hp 1,164)
+
+That is 3x the CLONE-based baseline (1.53-1.63x) and lands essentially ON the
+~4.6-4.9x bar set for declaring an editor effect. A CONFIGURATION DIFFERENCE
+ALONE reproduces the entire signal we are looking for.
+
+MECHANISM: Parent is a BULK population; nCas9 / D10A / editor samples are
+SINGLE-CELL DERIVED CLONES. Parent-specific sites pool endogenous A3A mutations
+across many lineages, so recurrent hairpin hotspots (hit independently in several
+lineages) accumulate. One clone carries one lineage's history. This is the
+"deterministic core" phenomenon from earlier phases, showing up as a 3x baseline
+shift.
+
+DOES NOT INVALIDATE THE EDITOR TEST: the real comparison is
+
+    A3A-Y130F CLONE vs Parent + D10A CLONES
+
+which is structurally identical to nCas9-clone2 vs Parent + nCas9-clone1.
+So the applicable baseline remains 1.53x and the ~4.6-4.9x bar stands.
+
+RULE: never compare enrichments across different sample configurations.
+Bulk-vs-clonal and clonal-vs-clonal have different baselines. Always quote an
+editor against a calibrator run in the IDENTICAL configuration - same clonality,
+same number and type of controls. A bulk sample scored against clonal controls
+will reach ~4.9x from population structure alone.

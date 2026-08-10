@@ -37,26 +37,63 @@ cell-state ssDNA proxy tried in earlier phases was null.
 
 ## 3. Results so far
 
-**Stands:**
-- **Hairpin dose-response is real.** Enrichment 1.05× (stem≥3) → 2.32× (stem≥9)
-  for APOBEC mutations vs strand+trinucleotide-matched negatives, flat random
-  baselines, survives all ten GC deciles and complexity matching.
-- **Sequence context saturates at ±5 bp.** AUROC 0.4989 (±1) → 0.6163 (±5) →
-  0.6185 (±15) → 0.6178 (±40). Thirty extra bp buy +0.0007. **A DNA LM has
-  nothing to find** — this is the information floor, measured directly.
-- **Reproduced independently in HEK293T clones.** The deaminase-free calibrator
-  shows 1.38–1.63× hairpin enrichment at stem≥7/≥8, and a VAF/coverage test
-  showed it is genuine endogenous A3A, not mappability artifact.
+**Stands (PCAWG / training side):**
+- **Hairpin dose-response is real.** 1.05x (stem>=3) -> 2.32x (stem>=9) for APOBEC
+  mutations vs strand+trinucleotide-matched negatives, flat random baselines,
+  survives all ten GC deciles and complexity matching.
+- **Sequence context saturates at +/-5 bp.** AUROC 0.4989 (+/-1) -> 0.6163 (+/-5)
+  -> 0.6185 (+/-15) -> 0.6178 (+/-40). **A DNA LM has nothing to find** -- this is
+  the information floor, measured rather than inferred.
+
+**Stands (HEK293T clones -- independent reproduction):**
+- The deaminase-free calibrator shows **1.28-1.63x** hairpin enrichment at
+  stem>=7/>=8, **replicated across two independent clones** (1.377/1.625 vs
+  1.280/1.531, agreeing to ~6%).
+- It is **endogenous A3A biology, not artifact**: hairpin-specific sites match
+  non-hairpin on VAF (0.0800 vs 0.0769) and coverage (27.0 vs 28.0), and the
+  effect survives coverage stratification (1.31-1.57x across 8-15x/15-25x/
+  25-35x/35x+ bins, n=3.6k-36k per bin).
+- **Statistically established, not just observed**: with a 2000-draw null
+  distribution (s7b_stats.py), observed CIs sit entirely above null CIs at
+  stem>=6/7/8 (p<0.0001 at >=7 and >=8).
+- **Survives within trinucleotide context** -- TCA 1.144/1.345/1.660 and
+  TCT 1.042/1.207/1.379 at stem>=6/7/8. Not composition. Effect is STRONGER in
+  TCA, the same asymmetry seen in PCAWG.
+- **98.76% germline-homozygous concordance** between two independently processed
+  genomes, while the low-VAF (editing) tier is only 6.8% shared -- i.e. clone-
+  private, which is the precondition for detecting editor-specific events.
 
 **Dead:**
-- **A3A-vs-A3B enzyme dichotomy is NULL.** ρ(enrichment, YTCA) = +0.355 at n=53
+- **A3A-vs-A3B enzyme dichotomy is NULL.** rho(enrichment, YTCA) = +0.355 at n=53
   collapsed to **+0.079 (p=0.44) at n=97**; partials +0.021/+0.021; null in every
-  burden tertile. The earlier 22-donor 2.23× was **winner's curse** from selecting
-  the extreme tail of a noisy statistic. I called this "validated" and then
-  "suggestive" before it resolved to null — both were wrong.
+  burden tertile. The 22-donor 2.23x was **winner's curse**. I called this
+  "validated", then "suggestive", before it resolved to null -- both were wrong.
 
-**Consequence:** the editor test is **EXPLORATORY, not confirmatory**. Do not
-restore confirmatory framing after seeing results.
+**Consequence:** the editor test is **EXPLORATORY, not confirmatory**.
+
+## 3b. THE BAR, and the traps around it
+
+**Editor must reach ~4.6-4.9x at stem>=8** -- i.e. >=3x over the replicated
+deaminase-free baseline of 1.28-1.63x. **Never quote an editor number against 1.0.**
+
+**TRAP 1 -- configuration dependence (3x effect, dangerous).** A BULK sample
+(Parent) scored against clonal controls gives **4.941x** at stem>=8 (CI 4.66-5.22)
+-- essentially ON the bar, from population structure alone. Bulk pools endogenous
+A3A across many lineages so recurrent hairpin hotspots accumulate; one clone
+carries one lineage. NEVER compare enrichments across sample configurations; the
+calibrator must match the editor in clonality.
+
+**TRAP 2 -- control count (3% effect, ignorable).** 1 vs 2 controls gives
+1.574 vs 1.531 at stem>=8, well inside overlapping CIs. So using more controls in
+the editor test than the calibrator had does NOT require re-deriving the baseline.
+
+**Known conservative bias:** the control mask preferentially removes hairpins
+(retention 0.9803 at stem>=8, 0.9737 at stem>=9, vs 0.9896 overall). 1-2% against
+a >=3x requirement -- it can only understate a real effect, never invent one.
+
+**Reporting requirement:** stratify by trinucleotide context, not just pooled --
+specific sites run 52.2% TCA vs 47.0% background, so a mix shift could imitate an
+editor effect.
 
 ## 4. Non-negotiable discipline (all learned the hard way here)
 
@@ -86,31 +123,56 @@ restore confirmatory framing after seeing results.
 (`9,39 * * * *`). Full prompt text is preserved in `cron_prompts.md` next to this
 file. The QA prompt must say *do the QA yourself, do not spawn subagents*.
 
-## 6. Live state at handoff
+## 6. Live state (updated 2026-08-10 ~15:50 UTC)
 
-Aligning on ai-chem (measured rates, not estimates):
+Node uptime ~16.5 h, never preempted. ~514 GB free. Seven systemd units active.
 
-| sample | progress | ETA |
+| sample | progress | role |
 |---|---|---|
-| nCas9-clone2 (calibrator) | 98% | minutes |
-| **P66-A3A-Y130F-clone2 (EDITOR)** | 93.0M / 825.9M reads | ~7.6 h |
-| **P66-D10A-clone1 (matched calibrator)** | 40.2M / 749.0M | ~9.7 h |
-| P66-background (4 threads, laggard) | 240.3M / 942.2M | ~31 h |
+| **P66-A3A-Y130F-clone2** | 534.6M / 825.9M (65%) | **EDITOR** |
+| **P66-D10A-clone1** | 414.0M / 749.0M (55%) | **matched calibrator** |
+| P66-A3A-Y130F-clone5 | 286.8M / 833.1M | editor replicate |
+| P66-background (4 threads) | 393.6M / 942.2M | matched parent, laggard |
 
-Complete: Parent + nCas9-clone1 counts (23/23 chromosomes each).
-**First editor result ≈ 10 h from handoff.** Full 19-sample queue ≈ 2.5 days.
+**Complete with 23/23 chromosome counts:** Parent, nCas9-clone1, nCas9-clone2
+(all three calibrators). Their BAMs were freed after pileup; counts retained.
 
-## 7. Open decisions (I recommended, user had not answered)
+Running units: `a3a-s2-q1..q4` (aligners), `a3a-s6-driver2` (pileups + selective
+BAM retention), `a3a-reaper` (stale-claim release), `a3a-q1-watchdog`.
 
-1. **Restart P66-background at 9 threads** — costs 10.5 h spent, finishes in ~16 h
-   vs 31 h remaining. Net saving ~14 h. Capacity frees as nCas9-clone2 completes.
-2. **Redirect w3 to the queue** when it finishes nCas9-clone2, otherwise it starts
-   `YE1-clone1` (hardcoded, expected-null). w1 and w2 were already redirected this
-   way; `queue.txt` is ordered by information value and drops nothing.
-3. **Cross-study germline masking is untested.** Parent (PRJNA1042830) as germline
-   mask for P66 (PRJNA1006866) samples assumes a shared HEK293T lineage. Our
-   98.76% homozygous concordance was measured *within* PRJNA1042830. Verify
-   cross-study concordance as soon as a P66 sample has counts.
+**First editor result** needs A3A-Y130F-clone2 + D10A-clone1 both piled up.
+Per-sample rates under 4-way contention are ~60-70M reads/h, so roughly 5-7 h
+from this timestamp, plus ~30 min of pileup each. Full 19-sample queue ~2 days.
+
+## 7. Decisions taken (previously open)
+
+1. **w1, w2 and w3 were all redirected** from hardcoded expected-null arms
+   (Y130G / VA / YE1) onto the queue, each stopped during download so nothing
+   aligned was discarded. All four alignment slots now serve the decisive
+   contrast. `queue.txt` is ordered by information value; nothing was dropped.
+2. **P66-background was NOT restarted at 9 threads.** I recommended this earlier
+   on the reasoning that it would save ~13 h -- that reasoning was WRONG. Threads
+   are zero-sum on a 32-core box, so reallocating would have taken them from other
+   samples without changing total work. The real lever was queue order, not
+   thread count.
+3. **`a3a-q1-watchdog` armed.** q1 still runs the OLD queue script (FTP URLs, no
+   FAILED guard). ENA's FTP now 404s for PRJNA1006866 paths while HTTPS works, and
+   the old script re-claims instantly on failure -- it spun 9x in 11 s when this
+   first happened. The watchdog retires q1 the moment P66-background completes (or
+   if BLOCKED.md exceeds 20 lines) and starts a replacement on `s2_queue_v2.sh`.
+   **This fires after the session is likely to have ended -- do not remove it.**
+4. **Pileup driver v2 retains editor-arm BAMs** (`A3A-Y130F`) after their 23
+   chromosomes, freeing controls as before, guarded by a 150 GB floor. Counts
+   cover most follow-ups but not read-level inspection, and regenerating a BAM
+   is ~8 h against 21 GB of disk.
+
+## 7b. Still untested
+
+- **Cross-study germline concordance.** The first editor test will likely use
+  Parent (PRJNA1042830) as germline mask for P66 (PRJNA1006866) samples, because
+  P66-background lags. Our 98.76% homozygous concordance was measured WITHIN
+  PRJNA1042830. 293T sublines drift between labs. **Verify as soon as any P66
+  sample has counts** -- same check, Parent vs a P66 control.
 
 ## 8. Known bugs found and fixed (all the same family)
 
