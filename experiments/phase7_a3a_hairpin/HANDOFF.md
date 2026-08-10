@@ -215,12 +215,21 @@ more controls than the calibrator had does not require re-deriving the baseline.
 Once an editor and its matched calibrator both have 23/23 counts:
 
 ```bash
+# FIRST RUN -- only D10A-clone1 exists at that point, and P66-background lags,
+# so Parent is the germline mask. Extra controls MUST be omitted: s7c intersects
+# chromosomes across all named samples, so naming an unaligned control yields an
+# empty intersection and the run aborts.
 ~/miniconda3/envs/apobec/bin/python /mnt/data/a3a/s7c_editor.py \
-    P66-A3A-Y130F-clone2 \
-    P66-D10A-clone1 \
-    P66-D10A-clone6,P66-D10A-clone10 \
-    P66-background
+    P66-A3A-Y130F-clone2  P66-D10A-clone1  ''  Parent
+
+# LATER, once D10A-clone6/clone10 and P66-background have 23/23 counts:
+~/miniconda3/envs/apobec/bin/python /mnt/data/a3a/s7c_editor.py \
+    P66-A3A-Y130F-clone2  P66-D10A-clone1 \
+    P66-D10A-clone6,P66-D10A-clone10  P66-background
+
 # args: <editor> <calibrator> <extra_controls_csv|''> <parent>
+# GATE: run s8_xstudy.py Parent <any P66 control> FIRST. If hom concordance
+# < 0.90 the Parent mask is invalid for P66 samples -- wait for P66-background.
 ```
 
 **Before trusting any output, re-run in validation mode** — two deaminase-free
