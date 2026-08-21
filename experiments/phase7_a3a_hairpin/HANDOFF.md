@@ -362,3 +362,242 @@ enrichment when it belongs to burden — that would likely have called a
 textbook-behaving A3A editor a null. (b) I recommended restarting P66-background
 at 9 threads to "save 13 h"; threads are zero-sum on a 32-core box, so the real
 lever was queue order, not thread count.
+
+---
+
+# 13. OVERNIGHT RUN 2026-08-20/21 — RESULTS
+
+Written during a gcloud auth outage from the session's own logs. Every number below
+was produced and verified on-node before the outage; nothing here is reconstructed.
+
+## 13.1 THE EDITOR TEST RAN. Endpoint B: NULL. Endpoint A: INCONCLUSIVE.
+
+Decision table was fixed in writing at 09:45 UTC, **before any P66 number existed**
+(STATUS.md, "PRE-REGISTRATION"). Results read against it, not the other way round.
+
+**STEP A — cross-study germline gate. PASSED.** This was §11's top open question.
+```
+s8_xstudy Parent vs P66-D10A-clone1, 23 chromosomes
+  germline HOM concordance  0.9839   (within-study reference 0.9876)
+  germline HET shared       0.4720   (within-study 0.4942)
+  LOW-VAF 0.03-0.15 shared  0.0637   (within-study 0.0677 — LOWER = safe direction)
+```
+≥0.97 → same lineage. **The two labs did not drift their HEK293T sublines.** Parent is
+a valid germline mask for P66. The low-VAF check also passes in the safe direction; a
+HIGH cross-study low-VAF share would have implied a shared technical artefact.
+
+Context for reading 0.9839: two *same-study, same-lineage* nCas9 clones score only
+0.9706 against each other when both are shallow (measured 03:45). Cross-study 0.9839 is
+comfortably inside same-lineage territory.
+
+**STEP B — validation. PASSED bit-for-bit.** nCas9-clone2 vs nCas9-clone1:
+burden 0.871 / 0.879 / 0.877 / 0.886, cov ratios 1.005 / 1.002 / 0.999 / 0.997.
+
+**STEP C — editor. P66-A3A-Y130F-clone2 and -clone5 vs P66-D10A-clone1, Parent mask.**
+
+ENDPOINT A — BURDEN: **INCONCLUSIVE, and the calibrator is disqualified.**
+Only one of four coverage bands was depth-matched (cov ratio 0.989); the other three
+were auto-flagged UNMATCHED by the depth audit. In the matched band the ratio was
+**0.144** (clone2) and **0.137** (clone5) — the editor carrying ~7× FEWER specific
+sites per Mb than its deaminase-free calibrator. Direction inverted, not merely short
+of the ≥3× bar.
+
+Cause found:
+```
+sample                med_cov     alt>=1     alt>=2  alt>=2/Mb  germline VAF>0.9
+A3A-Y130F-clone2         27      864,617    184,003     794.5       61,174
+A3A-Y130F-clone5         31      141,625*        —          —            —
+D10A-clone1              41    6,457,037    339,969    1469.0       60,240
+Parent                   35    1,135,489    307,860    1332.6       60,555
+nCas9-clone1             26      854,914    256,302    1117.4       60,537
+                                                   (*at cov>=20, chr1+2+22)
+```
+D10A-clone1 has **7.5× more alt≥1 sites than any other sample**, and **94.8% of them sit
+at VAF<0.05** (single-read band) against 78–79% for the editor clones. Its VAF≥0.35
+share is 1.4% vs 10.6–11.4%. Contamination or a real subclone would populate 0.05–0.35;
+that bin holds 0.4%. Germline VAF>0.9 counts are near-identical across all samples, so
+this is not lineage or calling drift. **D10A-clone1 has a sequencing-quality defect and
+is not usable as a burden calibrator.** At its median depth of 41 the mechanism reaches
+alt≥2 as well, which is the direct cause of the inverted ratio.
+
+ENDPOINT B — HAIRPIN (within-sample ratio, depth-immune → the interpretable half):
+```
+stem   clone2   clone5   pooled   pooled null95   n_hp   calibrator
+  6    0.899    0.859    0.879     0.93-1.07      589      1.213
+  7    1.034    1.144    1.089     0.88-1.14      250      1.378
+  8    1.069    1.323    1.196     0.78-1.22       96      1.532
+```
+**Neither editor clone reaches the calibrator at any stem length.** Pooled stem-6 is
+BELOW its null lower bound — a significant *depletion*, the opposite of a
+hairpin-targeting signature.
+
+Clones are NOT distinguishable from each other (Fisher p = 0.59 / 0.45 / 0.31), so the
+pooled estimate is the right one. Both editor clones are technically clean and
+indistinguishable (79.0% vs 78.5% VAF<0.05; 11.4% vs 11.4% VAF≥0.35).
+
+POWER: the calibrator's value lies OUTSIDE the editor's own null95 at every stem
+(1.213>1.11, 1.378>1.19, 1.532>1.34). The editor **could** have detected a
+calibrator-sized effect. This is evidence of no calibrator-sized effect, not silence.
+
+## 13.2 **1642× CROSS-CLONE RECURRENCE — and it was carrying the stem-8 signal**
+
+New control, not in any prior phase. Two *independent* clones should share ~2
+editor-specific sites. They share **3,000**:
+```
+jointly eligible   217,045,974
+clone2 specific         19,975
+clone5 specific         19,847
+shared by BOTH           3,000
+expected by chance           1.8
+OBS / EXP              1642.45x
+```
+Not lineage germline — VAF median 0.083 (germline sits near 0.5 or 1.0). At coverage ~30
+that is alt=2–3 reads at recurrent positions: systematic error-prone loci, or a
+sub-clonal population predating clone isolation. **Not editor-attributable either way.**
+
+Splitting clone2's sites by whether clone5 also called them:
+```
+set        stem   n_hp   n_sites    enr
+shared        6     40     3,000   0.795
+shared        7     22     3,000   1.275
+shared        8      8     3,000   1.326
+private       6    262    16,975   0.920
+private       7     97    16,975   0.994
+private       8     35    16,975   1.026
+```
+**On clone-private sites the editor is null to three decimals at stems 7 and 8.** The
+marginal pooled stem-8 value (1.196, p=0.046) came from the shared fraction. Note the
+pooled n_hp at stem 8 is 96 — the A3A-vs-A3B claim in this project died at n=97.
+
+ACTION TAKEN: `s7c_editor.py` gains `A3A_EXCLUDE_RECURRENT=<siblings>`, default OFF,
+and every run prints whether the filter was active and how many sites it cut. Patch
+written; apply with `fix_s7c_recurrence_v2.py`.
+
+## 13.3 MODEL TRACK — PURITY BEATS VOLUME (matched N, matched block)
+
+```
+arm   tcw     N        purity   AUROC             top0.1%  RANDOM   n
+v4s  >=0.20   83,999   0.8158   0.5506 ±0.0091    3.933x   0.965x   923
+v5   >=0.40   83,999   0.8642   0.5382 ±0.0080    5.017x   1.061x   923
+```
+Identical N, identical 6-feature block, identical fold structure. **+27.6% tail for
++0.049 purity.** v5's fused block reaches **5.280×**, beating v2's 4.960× with 4.1×
+LESS data.
+
+And the converse: **more data HURTS when it is dirty.** v3 (1,000,000 positives,
+uncapped, hypermutator-heavy) gives the HIGHEST AUROC (0.6115) and the WORST tail
+(**2.904×**). Selecting a dataset by AUROC picks the worst one available.
+
+**Full v5 tail ladder:**
+```
+gc_only                 1.120x   RANDOM 1.061x   ← inert
+sequence_only           3.814x
+hairpin_nogc            4.839x
+hairpin_only            5.017x
+hairpin_nogc+sequence   5.148x
+hairpin+sequence        5.280x
+```
+
+**ARCHITECTURE — this REFINES §10's "do not build a DNA LM".** Separate the claims:
+- **Size**: still argued against, three independent ways — context saturates by ±10 bp
+  (tail *decays* 2.351× at ±5 bp → 2.274× at ±40 bp), ~100–400k usable positives not
+  2.38M, and v3 showing more dirty data lowers the tail.
+- **Structure branch**: now POSITIVELY SUPPORTED. On v5, sequence_only 3.814× →
+  hairpin+sequence **5.280×** = **+38% tail for +0.0023 AUROC**. A model selected on
+  AUROC would discard the structure branch entirely.
+
+**Corrected recommendation: build the dual encoder, but COMPACT** — short-context
+sequence encoder (no Evo/NT-scale), plus the structure branch, trained on a CURATED
+high-purity set, **selected on tail enrichment, never AUROC.**
+
+Realized purity WITH the burden cap is **0.8155 / 0.8642**, not the 0.869/0.939 quoted
+in the cron prompt — those are UNCAPPED. The cap and the purity filter pull in OPPOSITE
+directions (at tcw≥0.40 the cap LOWERS purity 0.8909→0.8642) because high-tcw donors
+are hypermutators. Nobody had computed this.
+
+## 13.4 CONFOUNDS TESTED AND CLEARED THIS RUN
+
+- **GC deciles**: hairpin survives 10/10 with in-stratum random baselines.
+- **Complexity**: survives 10/10 entropy deciles, and the DIRECTION refutes the
+  artefact hypothesis — enrichment is WEAKEST in the lowest-complexity decile (1.071×)
+  and strongest in high-entropy deciles (1.598×). Dropping the most repetitive 50% of
+  the data moves it 1.2705 → 1.2571.
+- **Hotspots**: 99.93% of positive coordinates are singletons; recurrent coords account
+  for 0.14% of positives.
+- **Hairpin feature verified against hg19**: 65,000 sites, stem-pairing / gc_pairs /
+  hp_score / focal-C-in-loop all **100.000%**, including strand=1 sites (the bug-2
+  orientation test). Search is strand-symmetric to ≤2%.
+- **Coordinates**: ref base at 0-based `pos` is C/G by strand in **100.0000%**; using
+  `pos1` as the index gives 0.0000% — the two conventions are maximally distinguishable.
+- **−2 YTCA channel**: hairpin survives in BOTH YTCA and RTCA strata, and P(stem≥6) is
+  equal across them (2.216% vs 2.224% among positives) — the channels are orthogonal.
+- **YTCA background 0.6057 derived twice independently**: 0.6063 (83 donors) and
+  0.6056 (133 donors).
+
+## 13.5 BUGS 6 AND 7, AND WHAT THEY COST
+
+**BUG 6 — output filename did not follow the input version.** Every sed-derived variant
+(`s3_v3/v4/v4s/v5`, `s5_v4`) rewrote only the INPUT trainset name; the OUTPUT was
+hardcoded `s3_results_v2.json`. All arms overwrote each other, and every surviving file
+was labelled with the *script's* version rather than the *data's*. Caught with the true
+v2 baseline minutes from destruction. FIX: output name is now derived from `TRAINSET`,
+so it cannot disagree with the input.
+
+**BUG 7 — `hairpin_only` was not hairpin-only.** `local_gc` sat inside the block. The
+positive rate slides 1.210× → 0.789× across its deciles (negatives are not GC-matched),
+so every `hairpin_only` number was hairpin PLUS an uncontrolled regional channel. FIX:
+decomposed into `hairpin_nogc` / `gc_only` / `hairpin_only`. **Verdict: it changed
+nothing** — 4.249× → 4.264× without GC, and `gc_only` alone is 1.135× (1.120× on the
+pure set, against a 1.061× random baseline, i.e. inert). The defect was real; it was
+not inflating the result.
+
+**Also: a landmine I created and removed.** Fixing a hardcoded `envs/bio/samtools` on
+ai-chem2 (which broke s6 there for two driver sweeps) left the two nodes with DIVERGENT
+copies of `s6_pileup.py` — and ai-chem has samtools ONLY in `bio`. Syncing ai-chem2's
+copy onto ai-chem would have broken the critical path. Unified via `_find_samtools()`;
+normalised md5 now identical on both nodes.
+
+**samtools versions differ across nodes** (ai-chem 1.24 / ai-chem2 1.23.1). Bounded:
+the mpileup invocation is byte-identical and pins `-q 20 -Q 20 -d 500 --no-BAQ`. BAQ —
+the largest version-drift source — is explicitly disabled. Residual: `--ff` is not
+pinned; only matters for a cross-node comparison, and none has been run.
+
+## 13.6 OPEN, IN PRIORITY ORDER
+
+1. **P66-D10A-clone6** — clean replacement calibrator. Was 94.3% at 11:43 UTC; counts
+   likely completed ~12:40. **This is the single highest-value item**: it makes Endpoint
+   A measurable for the first time and gives Endpoint B a second clean reference.
+   Its BAM is protected by unit `a3a-keeper2` (hardlinks D10A BAMs on sight, because the
+   running driver's `KEEP_PATTERN` predates the calibrator's importance).
+2. **P66-D10A-clone10** — second clean calibrator. If clone6 and clone10 agree, the
+   baseline is established; if they disagree, D10A clones vary technically and the whole
+   calibration approach needs rethinking.
+3. **P66-A3A-Y130F-clone7** — third editor clone; moves stem-8 past n=96.
+4. **P66-background** — matched germline mask, removes the cross-study Parent step.
+5. Apply `fix_s7c_recurrence_v2.py` and rerun both editor clones vs clone6, **with and
+   without** the filter, so its effect is visible rather than assumed.
+6. `qa_specset_v2.py` replaces `qa_specset.py` (v1 has dead code and a fragile init).
+
+## 13.7 OPERATIONAL LESSONS
+
+- **The percentage counter in the cron prompt was ~2× wrong all night.** bwa logs are
+  append-only and were created 2026-08-10; each holds a dead 10-day-old run PLUS the
+  live one, concatenated with no banner. Summing the file adds them. Tell: two batch
+  sizes in one log (600000 = dead generation, 466668 = live). Replaced by
+  `progress.sh`, which reads bwa's own open-FASTQ fd offset — no history, and the two
+  mate files agree to ~0.1% as a built-in consistency check.
+- **A niced background job is not automatically harmless.** Nice governs CPU shares, not
+  cache or memory bandwidth. A 23.5 GB-resident model job with 48 threads roaming 32
+  cores halved bwa throughput at only 12% CPU. `taskset` to 4 cores recovered 1.8×.
+- **Eight slow-patch episodes**, 11–25 min each, all self-resolving: bwa at full CPU
+  consuming no input, because FASTQs are in flowcell order and hard reads arrive in
+  contiguous blocks. Never a stall. Confirm with per-process CPU before acting.
+- **CHECK THE INSTRUMENT BEFORE THE MACHINE.** Eight of my own measurement errors this
+  run (self-matching `pgrep`, misindexed probe, `awk` int32 overflow, grep pattern
+  hiding fold lines, a rename loop ignoring its own check, testing impossible input,
+  reading the wrong file for a systemd unit twice). The system was right every time.
+- **Resolve `systemctl show <unit> -p ExecStart` before reading any script.** I audited
+  the wrong file twice; both times the stale sibling was the weaker version. Dead scripts
+  are now renamed `SUPERSEDED_*`.
+- `feat/ARTIFACTS.md` on both nodes is the authority on what each result file actually
+  contains. If a filename and the manifest disagree, trust the manifest.
