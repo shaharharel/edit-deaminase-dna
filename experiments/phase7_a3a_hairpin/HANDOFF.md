@@ -727,3 +727,77 @@ covers the 5.036 vs 5.280 gap.
 - On `ai-gpu`'s scratch PD (persists across the stop): `emb_ntv2_v5.npz` (1.9 GB),
   `emb_hyena_v5.npz` (0.5 GB), `struct_thermo_v5.npz`, `a3a_trainset_v5_win1k.npz`
 - `ai-gpu` is **STOPPED**; no foreign process was running on it.
+
+---
+
+## 15. The editor track has a hard measurement bound — 2026-08-22
+
+Five arms across two studies all landed at or below the deaminase-free calibrator. The reason
+turns out not to be biology, and it is worth stating before anyone runs more clones the same way.
+
+### 15.1 Endpoint B is a subclonal measurement by necessity, not by choice
+The Parent-masked, `alt>=2` specific-site sets are **91–94% below VAF 0.15**. And hairpin
+enrichment **reverses across VAF strata**: at VAF<0.05 it is 1.04–1.15×, at VAF≥0.15 it is
+**0.545–0.660×** (depleted). Two studies, two deaminase families, same pattern.
+
+### 15.2 The clonal test is not weak — it is impossible
+Background P(stem≥8) on the Parent-silent set is 0.00201, so among a sample's clonal variants
+the hairpin count **expected by chance** is n × 0.002:
+
+| sample | all spec | ≥0.15 | ≥0.35 | expected n_hp |
+|---|---:|---:|---:|---:|
+| A3A-Y130F-clone2 | 20,010 | 2,710 | 601 | 1.2 |
+| A3A-Y130F-clone5 | 19,899 | 2,477 | 462 | 0.9 |
+| nCas9-clone1 | 90,844 | 7,000 | 554 | 1.1 |
+| nCas9-clone2 | 80,053 | 6,843 | 639 | 1.3 |
+| D10A-clone1 | 172,809 | 5,010 | 337 | 0.7 |
+| Lj-BE-clone3 | 1,301,573 | 28,405 | 542 | 1.1 |
+| Lj-BE-clone5 | 203,390 | 4,020 | 305 | 0.6 |
+| eA3A-RL1-clone1/2/5 | 186k–498k | 3.3k–8.3k | 352–396 | 0.7–0.8 |
+
+**One expected site per sample**, controls included. A test whose null expectation is a single
+site cannot resolve a 1.3× effect, let alone a 3× one. This is a bound, not a null.
+
+**For a DNA safety gate this is the crux**: the clinically relevant off-targets are the
+clonally fixed ones — permanent and heritable. The assay as constituted cannot address them.
+
+### 15.3 What it would take
+| target expected n_hp | clonal variants needed per arm | |
+|---:|---:|---|
+| 10 | 4,975 | barely |
+| 30 | 14,925 | thin but usable |
+| 100 | 49,751 | solid |
+
+Current: **337–639 per sample**. So ~25× more for a thin test, ~150× for a solid one.
+**Depth does not buy this** — a variant is clonal or it is not. It needs **25–50 clones per
+arm instead of 2–3**, or a different assay design.
+
+### 15.4 Method changes this forced, all validated
+- **`alt>=2` is a depth-dependent VAF cut** (VAF≥0.05 at 40×, ≥0.087 at 23×), so arms of
+  unequal depth were never comparable. A **VAF floor failed its own validation** — two
+  deaminase-free clones diverged 1.438 vs 1.159. **Matched coverage bands passed** it
+  (1.118/1.081, 1.383/1.380, 1.583/1.640) and were confirmed against an independent
+  re-implementation, 6/6 values to three decimals. Banded endpoint B is the method of record.
+- **The noise-floor criterion must be applied WITHIN study.** Normalised per × of coverage,
+  node A sits at 33k–39k and node B at 143k–466k — a 4–14× gap after normalisation, so the
+  studies genuinely differ in error rate. D10A-clone1 (205,900/×) sits *inside* node B's band:
+  it looks like a sample from the noisier study placed in the quieter cohort. That is a
+  sharper account of its defect than "7.5× outlier", and applying node A's threshold to node B
+  wrongly disqualified two sound Lj-BE clones for about twenty minutes.
+- **Calibrator qualification runs before any editor number** (`qualify_calibrator.py`,
+  wired as Step A0). Validated to reject D10A-clone1 and pass all five sound samples — the
+  first version rejected a *good* calibrator and was caught by testing it against known-good
+  samples, not just the one it was meant to reject.
+
+### 15.5 Corrections made to the record
+- **"The shared fraction carried the entire stem-8 signal"** (A3A-Y130F) rests on **n_hp = 8**;
+  Fisher p = 0.520. The downgrade still stands, but on the other leg: 3,000 sites shared
+  between two independent clones against 1.8 expected (1642×) means those sites are not
+  clone-private mutation, whatever their hairpin content.
+- **The stem-6 between-arm difference** (A3A-Y130F 0.877 vs eA3A 1.061, p = 2.6×10⁻⁶) reverses
+  under VAF control. It measured VAF composition. Retracted.
+- **"94.8% of D10A-clone1 sites below VAF 0.05"** is 87.2% under an explicit `alt≥1 & cov≥8`
+  definition, and 31.2% on the set the editor test actually uses. The figure moves with its
+  eligibility filter and was being quoted without one.
+- The **6.4× site-count gap** between Lj-BE clone3 and clone5 is **subclonal load, not noise**:
+  the excess peaks at VAF 0.10–0.15 (10.8×) and vanishes at clonal VAF (1.83×).
