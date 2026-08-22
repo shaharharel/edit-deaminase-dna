@@ -2118,3 +2118,59 @@ check said 25–50 clones per arm, and this says the same in the language of var
 survived every stratification and audit on the checklist — *and* its margin over same-editor
 variability is somewhere between 1.5σ and 4.8σ with no way to narrow that from data in hand. I
 am not quoting the favourable end.
+
+## 38. THE Y130G POSITIVE IS ARITHMETICALLY INCOMPATIBLE WITH ITS OWN BURDEN ENDPOINT
+
+**Read §25–§25.5 with this attached.** An expert panel found the argument; I verified it.
+
+```
+stem>=8: p_bg 0.00210, editor MH 2.969, calibrator MH 1.660
+EXCESS stem>=8 calls = (2.969-1.660) x 0.00210 x 83,530 = 230
+```
+
+Those 230 excess hairpin calls must come from the editor's own M mutations, needing hairpin
+rate h8 with M(h8 − h_endo) = 230, h_endo = 0.00349:
+
+| M | required h8 | × background |
+|---:|---:|---:|
+| 453 | 0.5104 | 243.0× |
+| 1,813 | 0.1301 | 62.0× |
+| 10,000 | 0.0264 | 12.6× |
+| 50,000 | 0.0081 | 3.8× |
+
+**Endogenous A3A hairpin selectivity tops out at 2–3×. And the burden endpoint caps M** (ratio
+0.92–0.98 against a 12% clone floor ⇒ M ≲ 10,000). At every M burden allows, required
+selectivity is 12–243× — implausible for a variant *engineered* to be hypoactive. At the only M
+where selectivity is plausible (~50,000), M is 60% of all calls, which burden excludes.
+**The constraints intersect in an empty set.** The +0.318/+0.396 cannot be an editor mixture
+effect at any permitted mixing fraction; the parsimonious reading is a clone-level property of
+the call set — what §37's sign disagreement already said.
+
+### 38.1 Every small p I quoted is struck
+Site-level permutation treats **sites** as exchangeable. **The exchangeable unit is the clone.**
+With 2v2 clones there are 3 permutations ⇒ **minimum attainable p = 0.33**. Every z=5.0 /
+p_ed 0.0000 supporting an *arm-level* claim measured within-clone site count, not an arm effect.
+
+### 38.2 The design-level point
+The editor is expressed **transiently, before single-cell isolation**, so its mutations are
+**clonal** (VAF≈0.5). Our endpoint sits at VAF<0.15 — 91–94% of calls, post-bottleneck mutation
+plus 2-of-25-read error. **We measured a stratum in which the editor was no longer active.**
+Identification failure, not power failure — and it explains everything at once.
+
+### 38.3 Framing corrections accepted
+"83,530 vs 84,280 — the same number" overstates: calibrator-specific counts span 79,654–90,757
+by comparator; the honest claim is *indistinguishable within the noise floor*. "6× smaller than
+the noise" is 5.5× at 2.2% and 24× at 0.5%. And 0.075/0.237 are |differences|, not SDs —
+E|X₁−X₂| = 1.128σ ⇒ σ = 0.066 and 0.210.
+
+### 38.4 Regional aggregation is strictly dominated
+**Genome-wide summation is maximal aggregation, and that is the burden endpoint, which is null.**
+Any partition beats the full aggregate only via weights correlated with true effect density —
+estimating those weights *is* the prediction problem returning 1.748×. Measured regional
+reliability 0.033 at 2 Mb attenuates any downstream correlation by √0.033 = 0.18.
+
+### 38.5 Power
+Burden (CV 12%): Δ=2.2% → **467** clones/arm; 1.0% → 2,261; 0.5% → **9,043**.
+Compositional: σ=0.066 → n≈3; σ=0.210 → n≈7–8; with variance overhead **10–12/arm**.
+**Cheapest decisive experiment: n=5 clones each of Y130G and VA (~10 WGS)** — F-test on a 10×
+variance ratio, F₀.₀₅(4,4)=6.39 — settles which floor is real.
