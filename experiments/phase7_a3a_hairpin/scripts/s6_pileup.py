@@ -19,7 +19,7 @@ stream in this project.
 
 Usage: s6_pileup.py <sample> <bam> [chrom]
 """
-import os, sys, subprocess, time
+import os, sys, subprocess, time, shutil
 import numpy as np
 sys.path.insert(0, '/mnt/data/a3a')
 from pileup_parse import count_alt, count_depth
@@ -27,7 +27,26 @@ from pileup_parse import count_alt, count_depth
 BASE = "/mnt/data/a3a"
 FEAT = f"{BASE}/feat"
 REF = "/mnt/data/ref/hg19.fa"
-SAMTOOLS = os.path.expanduser("~/miniconda3/envs/bio/bin/samtools")
+def _find_samtools():
+    """Resolve samtools identically on every node, or fail loudly.
+
+    Order: sibling of the running interpreter, then the known conda envs, then PATH.
+    A hardcoded single path caused a 0/23-counts failure on ai-chem2 that looked like
+    a stall for two driver sweeps, so this must never depend on one node's layout.
+    """
+    cands = [os.path.join(os.path.dirname(sys.executable), "samtools")]
+    cands += [os.path.expanduser("~/miniconda3/envs/%s/bin/samtools" % e)
+              for e in ("apobec", "bio")]
+    w = shutil.which("samtools")
+    if w:
+        cands.append(w)
+    for c in cands:
+        if os.path.exists(c):
+            return c
+    raise SystemExit("FATAL: samtools not found. Tried: " + ", ".join(cands))
+
+
+SAMTOOLS = _find_samtools()
 MIN_MQ, MIN_BQ, MAX_DEPTH = 20, 20, 500
 
 sample, bam = sys.argv[1], sys.argv[2]
@@ -166,8 +185,16 @@ def main():
         f"(expect ~1.0; a large skew means a counting/orientation bug)")
     if tf + tr > 1000 and (ratio > 2.0 or ratio < 0.5):
         log("WARNING: strand-asymmetric alt counts -- investigate before use.")
-    np.savez_compressed(out, cov=cov, alt=alt, alt_fwd=alt_f, alt_rev=alt_r,
+    # atomic: a truncated file must never be visible at the final path,
+    # because every driver treats its EXISTENCE as 'this chromosome is done'
+    # numpy APPENDS .npz when the name does not already end in it, so the temp name
+    # must carry the extension or savez writes <out>.partial.npz and the os.replace
+    # below renames a file that does not exist. That silently mis-named every clone6
+    # chromosome and stopped the critical path at a gate that blamed the data.
+    _tmp = out + ".partial.npz"
+    np.savez_compressed(_tmp, cov=cov, alt=alt, alt_fwd=alt_f, alt_rev=alt_r,
                         sample=np.array([sample]))
+    os.replace(_tmp, out)
     open(f"{BASE}/flags/S6_{sample}_chr{chrom}_DONE", "w").write("ok\n")
     log(f"wrote {out}")
 
