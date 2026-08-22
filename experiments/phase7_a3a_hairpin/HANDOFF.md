@@ -1923,3 +1923,45 @@ design.**
 
 That result is the one that answered the user's question and grounds the claim that the obstacle
 is the *data* rather than the model — a claim only as good as the matching under it.
+
+## 34. Genomic-scale search in CANCER — measured at last, and it works where the editor doesn't
+
+I had told the user that 5.280× is over a constructed base rate and that genomic-scale search in
+cancer was **never measured**. Closing that.
+
+Every site in the hg19 TCW universe scored with the PCAWG-trained model; real PCAWG mutations
+from the 21 training donors joined via `pos1` (1-based), with a join-rate guard because bug 3
+recurred 22 times.
+
+```
+universe 236,482,055 sites
+PCAWG mutations from those donors landing on it: 92,823 of 257,045 = 36.1%
+  (expected -- the universe is TCW-only; this measures APOBEC-CONTEXT capture,
+   denominator 92,823, stated)
+GENOMIC base rate 0.000393 = 1 in 2,548, ceiling 2,547.7x  (232x from the trainset's 11.00x)
+
+panel         sites  mutations found   capture   enrich   RANDOM
+0.01%        23,648              187     0.20%   20.146    0.754
+0.10%       236,482              681     0.73%    7.337    0.776
+1.00%     2,364,820            2,942     3.17%    3.169    1.020
+5.00%    11,824,102            8,334     8.98%    1.796    1.016
+10.00%   23,648,205           13,712    14.77%    1.477    0.999
+```
+
+### 34.1 The first genuinely like-for-like comparison in this project
+
+| panel | CANCER cap | CANCER enr | EDITOR cap | EDITOR enr | ratio |
+|---|---:|---:|---:|---:|---:|
+| 0.10% | 0.73% | **7.337** | 0.17% | 1.748 | 4.20× |
+| 1.00% | 3.17% | **3.169** | 1.15% | 1.146 | 2.77× |
+| 5.00% | 8.98% | **1.796** | 4.93% | 0.985 | 1.82× |
+
+Both at genomic scale, both against their own random baseline, base rates within 2% of each
+other (1 in 2,548 vs 1 in 2,574). **Cancer works at genomic scale** — 14.77% of APOBEC-context
+mutations in the top 10% of sites, and the enrichment *climbs* as the panel tightens (20.146× at
+top 0.01%). **The editor does not** — 1.748× at the same depth, decaying to 0.985× by top 5%.
+
+**The headline is no longer "structure predicts APOBEC mutations in a matched design."** It is:
+*the same model, at the same genomic scale, concentrates cancer APOBEC mutations 7.3× and
+base-editor off-targets 1.7×.* The biology is findable in a genome; the editor's 0.5–2% slice of
+it is not.
