@@ -1670,3 +1670,50 @@ it is recorded now:
 Committed to reporting whichever lands and to not reinterpreting the categories afterwards.
 Every check on Y130G was retrofitted after a surprising number; retrofitted checks are worth
 less than pre-committed ones however carefully done.
+
+## 30. VA is NULL — the pre-registered "Y130G-specific" branch. And the panel replicates.
+
+**VA-clone1 vs nCas9-clone1**, both qualified on the corrected gate (0.65× and 1.06×):
+
+```
+banded MH   stem6  editor 0.985  calib 1.015  ->  -0.030
+            stem7  editor 1.186  calib 1.344  ->  -0.158
+            stem8  editor 1.344  calib 1.612  ->  -0.268
+GC-adjusted MH     editor 0.975  calib 1.041  ->  -0.066
+complexity  MH     editor 0.988  calib 1.054  ->  -0.066
+```
+
+Against §29's pre-registration, written before the data existed: **−0.066 is the null category.**
+The standing expectation (haA3A engineered for near-background) is **upheld for VA**, and Y130G
+is now a **single-variant anomaly** — exactly what the null branch said it would be. Categories
+not reinterpreted after the fact.
+
+### 30.1 The panel result replicates with a permutation null
+
+| panel | clone1 gap | clone2 gap | z (200 perms) |
+|---|---:|---:|---:|
+| 0.01% | +2.620 | +2.766 | **5.0** |
+| 0.10% | +0.459 | +0.466 | 2.7 |
+| 1.00% | +0.098 | +0.046 | 1.8 |
+| 5.00% | +0.060 | +0.024 | 2.5 |
+
+Null centred at ~0.000, sd 0.525/0.173/0.050/0.023. Clones agree to 0.007 at 0.1%. Fixes both
+defects in the first run — no baseline at 0.01%, and a single shuffle rather than a distribution.
+
+### 30.2 The coherent picture, narrower than the panel number alone suggests
+
+```
+Y130G      hairpin excess +0.318/+0.396   AND panel transfer z=5.0, replicated
+A3A-Y130F  NO hairpin excess -0.18/-0.21  AND panel ANTI-transfer -0.483
+VA         NO hairpin excess -0.066       -> panel should be null; test running
+```
+
+**The model transfers exactly where hairpin signal exists** — the best explanation this project
+has produced for why the original transfer failed. It also confines the phenomenon to **one
+variant of three**.
+
+**It does not become "we can predict base-editor burden."** The panel showing z=5.0 captures 35
+of 83,530 editor mutations — missing 99.96% — and the skill is gone by the panel size where
+capture becomes meaningful. The defensible statement is about **mechanism**: a cancer-trained
+hairpin model ranks off-target sites in the one editor variant that shares its sequence
+preference, and fails or anti-transfers in two that do not.

@@ -32,7 +32,27 @@ import numpy as np
 FEAT = os.environ.get("A3A_FEAT", "/mnt/data/a3a/feat")
 CH = [str(i) for i in range(1, 23)] + ["X"]
 CAL = sys.argv[1] if len(sys.argv) > 1 else "P66-D10A-clone6"
-PEERS = ["P66-A3A-Y130F-clone2", "P66-A3A-Y130F-clone5", "nCas9-clone1", "nCas9-clone2", "Parent"]
+# --- PEER DISCOVERY (added 2026-08-22 QA) ------------------------------------------------
+# PEERS was a HARDCODED node-A list. On node B only 3 of its 5 entries exist, so qualifying
+# nCas9-clone1 there found 2 peers, printed "fewer than 3 peers -- cannot fit a depth trend",
+# and SILENTLY FELL BACK to the raw peer-median criterion -- the one measured at r=0.9255 with
+# coverage, i.e. a depth detector. Meanwhile node B had 11 usable samples sitting unused.
+# That is the standing bug family aimed at the gate itself: a list correct on one node,
+# consumed on the other as if universal.
+# Fix: DISCOVER the peers present, minus the sample under test, minus those already shown to
+# fail on the ANALYSIS stratum (they would inflate the expected value and let bad samples in).
+import glob as _glob
+_EXCLUDE = {"P66-background", "P66-A3A-Y130F-clone7"}   # fail alt>=2, see HANDOFF 22 / 26
+def _discover_peers():
+    seen = set()
+    for f in _glob.glob(f"{FEAT}/counts_*_chr1.npz"):
+        n = f.split("/counts_")[-1].replace("_chr1.npz", "")
+        if n.endswith(".partial"): continue
+        seen.add(n)
+    return sorted(seen - _EXCLUDE)
+PEERS = _discover_peers()
+print(f"  peer discovery: {len(PEERS)} candidates found in {FEAT}")
+
 MAX_SUBVAF = 0.80      # healthy band is 0.518-0.672; clone1 is 0.872
 MAX_RATIO  = 3.0       # clone1 is 7.5x the peer median
 
