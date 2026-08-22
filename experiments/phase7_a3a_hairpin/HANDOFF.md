@@ -1336,3 +1336,41 @@ on firmer ground than when written.
 **Caveat kept:** the editors sit at ~19.7k specific sites, 4× below the lowest deaminase-free
 point. A burden effect appearing only at low burden would be invisible here. What is excluded is
 a burden effect across 79.7k–172.6k.
+
+## 25. The haA3A arm contradicts its own pre-registration — EXPLORATORY, unresolved
+
+Pre-registration stamped into the driver at 07:19, hours before the data existed: *haA3A
+(Y130G/VA) was engineered for near-background off-target. Expect NO enrichment. A null
+validates the endpoint. **A positive means the endpoint is broken, not that the editor is
+active.*** Gate A0 passed first (nCas9-clone1 qualified, 0.89× peer median, 53.0% sub-0.05).
+
+**Endpoint A — burden: near-background, as engineered.** Y130G-clone2 0.922/0.944/0.959/0.978
+and clone1 0.956/0.954/0.963/0.976, cov ratios 0.986–1.005, against a validation floor of
+0.871–0.886. Nowhere near the ≥3× bar.
+
+**Endpoint B — banded MH: the opposite of what was pre-registered.**
+
+| | stem 6 ed/cal/diff | stem 7 ed/cal/diff | stem 8 ed/cal/diff |
+|---|---|---|---|
+| **VALIDATION (null)** | 1.118 / 1.081 / **+0.037** | 1.383 / 1.380 / **+0.003** | 1.583 / 1.640 / **−0.057** |
+| Y130G-clone2 | 1.411 / 1.086 / **+0.325** | 2.101 / 1.396 / **+0.705** | 2.969 / 1.660 / **+1.309** |
+| Y130G-clone1 | 1.430 / 1.095 / **+0.335** | 2.256 / 1.459 / **+0.797** | 3.399 / 1.829 / **+1.570** |
+
+Bar was >+0.11. Two clones replicate closely and the effect **scales monotonically with stem
+length** — the shape a real hairpin preference predicts, not a flat artefact offset.
+
+**The tension, recorded unresolved.** The pre-registration says a positive means the endpoint is
+broken. But the validation row — two deaminase-free clones, same estimator, same calibrator,
+same run — returns +0.037 / +0.003 / −0.057, essentially exact zero. "The endpoint is broken"
+does not fit an endpoint that returned null on a true-null pair minutes earlier. Both facts
+stand; I am resolving neither.
+
+**The central puzzle is biologically backwards.** A3A-Y130F, the *active* deaminase, gives
+ed−cal of **−0.184 / −0.213** within-study. Y130G, *engineered for near-background*, gives
+**+0.325 / +0.335** rising to **+1.309 / +1.570**. The engineered-safe variant shows the signal
+and the active one shows depletion — and this is not a study effect, since both are now measured
+within-study. **Until that inversion is explained, no editor claim can be made in either
+direction.**
+
+**Not final:** the driver's GC-stratified arms and its within-family null control are still in
+flight. Every other arm this session moved 7–15% under GC adjustment.
