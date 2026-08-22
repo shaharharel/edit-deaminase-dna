@@ -1504,3 +1504,36 @@ later-passage clones. All need metadata not in hand.
 control I can build; the A3A-Y130F depletion now has three independent reasons for distrust. But
 distrusting the null is not believing the positive, and the pre-registration expecting no haA3A
 enrichment still stands unexplained.
+
+### 25.2 Checked my own reporting standard on n — consistent, but the bands deserve showing
+
+I declined to quote stem 8 for the A3A-Y130F arm as too thin, then quoted stem 8 for Y130G as
+the largest effect without checking its n. Checking:
+
+| arm | stem6 n_hp | stem7 n_hp | stem8 n_hp | |
+|---|---:|---:|---:|---|
+| A3A-Y130F-clone2 | 302 | 119 | 43 | stem 8 **not** quoted |
+| Y130G-clone2 | 2,069 | 1,075 | 519 | stem 8 quoted |
+
+Y130G's stem 8 carries **12×** the hairpin hits of the arm whose stem 8 I declined to quote —
+the standard was consistent. With p_ed = 0.0000 at every stem: observed 1.362 / 2.069 / 2.866
+against null95 of 0.95–1.05 / 0.91–1.09 / 0.86–1.14.
+
+**But the check found band structure the pooled MH hides**, at stem 8:
+
+```
+band          editor   calib   n_hp ed   n_hp cal
+(8,15)         3.269   1.955         8          5   thin
+(15,25)        3.681   1.571       110         50
+(25,35)        2.693   1.831        70         51
+(35,60)        2.503   1.600        31         21
+(60,100)       0.000   1.686         0          2   ZERO CELL
+```
+
+The effect lives in (15,25) and (25,35), where MH puts its weight. The deep bands are thin, one
+is a zero cell, and **at stem 7 the deepest band inverts** (editor 0.907 vs calibrator 1.339).
+None of it changes the pooled number, but quoting only the pooled value concealed it.
+
+**Still exploratory.** The band structure is consistent with a real effect concentrated where
+the data are — but "consistent with" is not "demonstrates", and the inversion against
+A3A-Y130F remains unexplained.
