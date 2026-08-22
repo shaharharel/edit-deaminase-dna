@@ -1896,3 +1896,30 @@ Republished to the same URL.
 **Not claimed:** that the sweep proves the rest of the record is free of this defect. It proves
 every enrichment states its own base rate; it does not prove no two are compared across scales
 somewhere unexamined. The only defence is the habit added in §33.2.
+
+### 33.4 Check 1 on the learnability test — asserted "by construction", now measured
+
+`s13_learnable.py` printed *"negatives matched on trinuc AND strand by construction"*. That
+phrase is what I also said about the atomic write (which silently mis-named 23 files) and the
+gate's peer list (which silently fell back to 2 peers). It is not evidence — and there was a
+specific way it could be false: the matcher takes `min(need, len(candidates))`, so a stratum
+short of candidates silently drops its ratio with no warning.
+
+| arm | tri | strand | positives | negatives | ratio | pos share | neg share |
+|---|---|---:|---:|---:|---:|---:|---:|
+| editor | TCA | 0 | 21,390 | 213,900 | 10.000 | 0.2561 | 0.2561 |
+| editor | TCA | 1 | 21,553 | 215,530 | 10.000 | 0.2580 | 0.2580 |
+| editor | TCT | 0 | 20,275 | 202,750 | 10.000 | 0.2427 | 0.2427 |
+| editor | TCT | 1 | 20,312 | 203,120 | 10.000 | 0.2432 | 0.2432 |
+| calibrator | TCA | 0 | 21,575 | 215,750 | 10.000 | 0.2560 | 0.2560 |
+| calibrator | TCA | 1 | 21,817 | 218,170 | 10.000 | 0.2589 | 0.2589 |
+| calibrator | TCT | 0 | 20,487 | 204,870 | 10.000 | 0.2431 | 0.2431 |
+| calibrator | TCT | 1 | 20,401 | 204,010 | 10.000 | 0.2421 | 0.2421 |
+
+**max |pos share − neg share| = 0.00000 in both arms; zero strata ran short.** Focal base C and
+offset −1 = T for 100% of both classes by the TCW universe definition; offset +1 *is* the `tri`
+field and matches to five decimals. **The 4.422×/2.350× numbers rest on a genuinely matched
+design.**
+
+That result is the one that answered the user's question and grounds the claim that the obstacle
+is the *data* rather than the model — a claim only as good as the matching under it.
