@@ -1607,3 +1607,35 @@ same-day true-null validation flat on every endpoint and breakdown; two-clone re
 monotone stem scaling; adequate n throughout. **Nothing on the checklist has moved it** — still
 exploratory, still no editor claim, inversion still unexplained. The result that would change
 this is **VA**, the other haA3A variant, aligning now.
+
+### 25.5 Strand audit (motivated by bug 4) — a real asymmetry, resolved conservatively
+
+**The signal is on both strands:** plus editor 1.297 / calib 1.028 → **+0.269** (n_hp 902);
+minus editor 1.403 / calib 1.015 → **+0.387** (n_hp 981). Both clear the bar; asymmetry 0.119.
+
+**Then something that looked bad.** alt_fwd/alt_rev inside editor-specific sites, split by the
+C's genomic strand: editor **1.090 / 0.888** (spread 0.202) against calibrator **1.028 / 0.938**
+(spread 0.090). A mirror skew tied to the reference base is exactly bug 4's family, and the
+editor's is 2.2× the calibrator's.
+
+**The decisive control — split by hairpin status:**
+
+| arm | stratum | plus | minus | spread | increment at hairpins |
+|---|---|---:|---:|---:|---:|
+| ed | non-hairpin | 1.088 | 0.888 | 0.200 | |
+| ed | **HAIRPIN** | 1.193 | 0.896 | **0.297** | +0.097 |
+| cal | non-hairpin | 1.026 | 0.940 | 0.086 | |
+| cal | **HAIRPIN** | 1.130 | 0.832 | **0.298** | +0.212 |
+
+1. **Hairpin sites carry more skew in both arms, and the hairpin spreads are identical** (0.297
+   vs 0.298) — a property of hairpin sites, not of the editor.
+2. **The editor does carry more baseline skew** — 0.200 vs 0.086 in the non-hairpin stratum,
+   where hairpins play no role. A real sample-level property, recorded rather than explained
+   away.
+3. **The direction is conservative.** The non-hairpin→hairpin increment is +0.097 for the editor
+   and **+0.212 for the calibrator**. Orientation-dependent calling would inflate the
+   *calibrator* more — working against the observed enrichment, not for it.
+
+The concern resolves in the direction that does *not* help the headline stand, which is the only
+kind of resolution worth trusting. Position unchanged: exploratory, no editor claim, inversion
+unexplained.
