@@ -1433,3 +1433,34 @@ impossible, not pending.**
 **The useful part of that run:** the clonal-power check gives expected n_hp at VAF≥0.35 of
 **0.6–1.7 across all nine samples** — powerless throughout. The standing bound (25–50 clones per
 arm) is now measured on nine samples rather than inferred.
+
+## 27. A quantified lead on the inversion — the arms' analysis sets diverge in one filter step
+
+| sample | cov | alt≥1 | alt≥2 | specific | spec/alt≥2 |
+|---|---:|---:|---:|---:|---:|
+| A3A-Y130F-clone2 | 25.52 | 864,617 | 184,003 | 19,841 | **0.108** |
+| A3A-Y130F-clone5 | 26.22 | 861,941 | 185,005 | 19,694 | **0.106** |
+| nCas9-clone1 | 24.25 | 854,914 | 256,302 | 90,757 | 0.354 |
+| nCas9-clone2 | 24.25 | 780,594 | 245,984 | 80,053 | 0.325 |
+| D10A-clone6 | 39.97 | 5,837,065 | 346,239 | 171,632 | 0.496 |
+
+At **alt≥2** the A3A-Y130F clones hold 72% of what nCas9 holds — a modest gap. After the
+**specificity filter** they hold 22%. **The gap triples in that one step**, and it is the step
+that defines the analysis set every MH OR is computed on.
+
+**It is not the calibrator veto**, the obvious suspect: the calibrator's own alt≥2 rate is
+256,302/215M = **0.12%** of eligible sites, which cannot mechanically remove 89% of anything.
+The loss sits in the Parent germline mask or joint eligibility, and hits A3A-Y130F ~2.5× harder
+than nCas9.
+
+**Why it matters:** every editor number in §21/§21.2/§23.1/§25 is computed on the "specific"
+set. If that set is assembled by a filter removing 89% of one arm and 65% of the other, the arms
+are not measuring the same population of sites, and a difference in their hairpin fractions need
+not be an editor difference. **This is a candidate explanation for the inversion that requires
+neither editor to behave strangely.**
+
+**A lead, not a finding.** I have not shown the filter is responsible — only that it is where
+the arms diverge and that the obvious mechanism cannot account for it. **Next action:**
+per-filter-stage counts (joint eligibility → Parent mask → calibrator veto, separately per arm).
+Those need node A's counts files; node A is stopped. **This is the first thing to run if node A
+is restarted**, ahead of any new arm.
