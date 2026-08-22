@@ -1054,3 +1054,41 @@ Held-out **chromosome** folds; random baseline beside every number:
 **Effect on §16.** The transfer test trained on v5 (unmatched). This shows what v5 learns is not
 a coverage artefact, so the 5.369× in-sample positive control rests on controlled ground —
 "the model works; the transfer does not" is better supported after this than before.
+
+## 19. Purity vs volume — purity wins by 4.4×, and the third arm is correctly refused
+
+Raising `tcw_frac` shrinks N *and* shifts the donor burden distribution, and burden is an
+established effect modifier here (1.821× low-burden → 1.151× hypermutator). A naive purity
+sweep would confound purity with burden and with N. The ablation holds the burden cap at
+≤10k for every arm and N-matches the comparison:
+
+| arm | donors | top 0.1% | RANDOM | AUROC | n |
+|---|---:|---:|---:|---:|---:|
+| v4 — tcw≥0.20, N=207,106 | — | 4.554× | 0.966 | 0.6082 | 2,278 |
+| v4s — tcw≥0.20, N=83,999 | 83 | 4.338× | 0.870 | 0.6043 | 923 |
+| v5 — tcw≥0.40, N=83,999 | 21 | **5.280×** | 1.085 | 0.6246 | 923 |
+| v5cov — tcw≥0.40 + coverage-matched | 21 | 5.096× | 0.929 | 0.6244 | 895 |
+
+```
+PURITY at matched N       (v5 - v4s) = +0.942x
+VOLUME at matched purity  (v4 - v4s) = +0.216x
+cost of coverage matching            = -0.184x
+random-baseline spread across arms   =  0.215   <- the floor these must beat
+```
+
+**Purity is worth 4.4× what volume is worth**, and achieves it with 21 donors instead of 83.
+Volume's +0.216 sits exactly at the noise floor and is not a demonstrated effect. Coverage
+matching costs −0.184, also inside the floor — effectively free.
+
+### 19.1 The tcw≥0.60 arm is refused, not missing
+With the burden cap applied, only **4 donors / 20,979 positives** survive at tcw≥0.60. Counts
+quoted without the cap (~152k) don't reflect a runnable arm, and the cap is not optional
+because burden is the modifier the design controls for. Running it would produce a result about
+four people and label it purity.
+
+### 19.2 Standing caveat on v5
+v5 — the trainset behind the transfer test, the architecture recommendation and the 5.280×
+baseline — rests on **21 donors**. The effect strengthened as the pool shrank 83 → 21, the
+opposite direction from the A3A-vs-A3B claim that died going 53 → 97. Reassuring but not
+sufficient: at 21 donors a **leave-one-donor-out spread is the honest error bar** on 5.280×,
+and `qa_perfold.py` should be pointed at v5 by donor, not only by chromosome.
