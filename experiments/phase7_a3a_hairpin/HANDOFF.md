@@ -1296,3 +1296,43 @@ study artefact**. Both within-study values remain far on the wrong side of the p
 
 **What does not improve:** burden asymmetry gets *worse* — editor 19,714 specific sites vs
 calibrator 171,632 (8.7×, against 4.6× for nCas9). §21.1's caveat stands with more force.
+
+## 24. §21.1's burden caveat is answered — burden does not explain the depletion
+
+§21.1 said the burden confound couldn't be settled with two deaminase-free clones and needed
+clones spanning a burden range. Correcting gate A0 (§23) returned both D10A clones to use,
+which supplies exactly that.
+
+| calibrator | specific sites | own MH OR |
+|---|---:|---:|
+| nCas9-clone2 | 79,654 | 1.077 |
+| nCas9-clone1 | 90,757 | 1.041 |
+| D10A-clone6 | 171,632 | 0.961 |
+| D10A-clone1 | 172,610 | 1.078 |
+
+**The decisive pair is internal.** D10A-clone6 and D10A-clone1 sit **0.6% apart in burden** and
+give MH **0.961 vs 1.078** — a gap of **0.117 at identical burden**. Across the full 2.2× burden
+range the total spread is *also* 0.117. Burden explains none of it; the spread is clone-to-clone
+scatter. (corr(log burden, MH) = −0.441, which is what four points do when three are noise.)
+
+**Editor arms — five measurements, two clones, three calibrators, two studies:**
+
+```
+clone2 vs D10A-clone6  0.777      clone2 vs nCas9-clone1  0.760
+clone5 vs D10A-clone6  0.748      clone5 vs nCas9-clone1  0.739
+clone2 vs D10A-clone1  0.776
+
+deaminase-free  mean 1.039  sd 0.055  (n=4)
+editor          mean 0.760  sd 0.017  (n=5)
+DEFICIT 0.279 = 5.1x the deaminase-free scatter
+```
+
+The editor measurements are **five times tighter** than the calibrators (sd 0.017 vs 0.055).
+
+**Effect on the record:** §21.1 said the burden confound was not excluded and endpoint B might
+be burden-affected. **That is now answered in the negative.** The null in §21/§21.2/§23.1 stands
+on firmer ground than when written.
+
+**Caveat kept:** the editors sit at ~19.7k specific sites, 4× below the lowest deaminase-free
+point. A burden effect appearing only at low burden would be invisible here. What is excluded is
+a burden effect across 79.7k–172.6k.
