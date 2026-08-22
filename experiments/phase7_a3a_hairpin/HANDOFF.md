@@ -940,3 +940,47 @@ APOBEC mutagenesis in tumours is a sequence preference that does not describe wh
 deposits damage in HEK293T. The preference is non-monotone in score (top 5% is AT-rich at
 0.3554), so "the model likes GC" is too simple a summary — but the mismatch at the operating
 point is the concrete reason the transfer fails.
+
+## 17. Node-B Lj-BE arm — both endpoints null (2026-08-22 06:49–06:55)
+
+Three Lj-BE clones (integrity 0 defects, strand 1.003–1.008) completed and both armed
+analyses fired.
+
+**Three-way cross-clone sharing.** ALL-3 class 149,590 observed vs 5.63 expected (26,574×),
+2-of-3 63,598 vs 7,408 (8.6×). No Parent mask by design, so ALL-3 is germline-dominated —
+consistent with its hairpin enrichment sitting at background (1.109× at stem≥8).
+
+Hairpin enrichment by sharing class, stem≥8 (background p=0.00210):
+
+| class | n | n_hp | enrichment |
+|---|---:|---:|---:|
+| private | 1,854,295 | 5,378 | 1.379× |
+| 2 of 3 | 63,598 | 261 | **1.951×** |
+| ALL 3 | 149,590 | 349 | 1.109× |
+
+Read against the **~1.4× deaminase-free floor, not 1.0**: the clone-private class — the one
+that would carry real editor mutation — is at or below the floor, and the only elevated number
+is the recurrence-prone 2-of-3 class. **Same shape as the A3A-Y130F arm the site-recurrence
+control downgraded.**
+
+**GC-stratified banded endpoint B** (vs eA3A-RL1-clone1):
+
+| | crude OR | GC-adjusted MH | shift |
+|---|---:|---:|---:|
+| clone5 editor | 1.049 | 0.976 | −7.0% |
+| clone5 calib | 1.070 | 0.940 | −12.1% |
+| clone12 editor | 1.193 | 1.057 | −11.4% |
+| clone12 calib | 1.069 | 0.939 | −12.2% |
+
+Both columns move together, which is the signature of a shared GC artefact rather than an
+editor difference. Adjusted values sit far below the floor.
+
+**Caveat, flagged before the run and held to:** eA3A-RL1 is an *editor*, not a deaminase-free
+control. The "calib" column is editor-vs-editor. This is a cross-family contrast and **no
+editor claim rests on it**. The within-family null control (eA3A-clone2 vs clone1) gives the
+estimator's own floor and was still running at time of writing.
+
+### 17.1 Methodological result worth carrying forward
+GC adjustment moves **every** arm by 7–12%. Crude endpoint-B numbers across this project carry
+a GC-composition inflation of about that size, so **any crude OR near 1.1 is consistent with
+zero** once GC is controlled.
