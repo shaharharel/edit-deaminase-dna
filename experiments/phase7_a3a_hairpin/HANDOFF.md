@@ -1464,3 +1464,43 @@ the arms diverge and that the obvious mechanism cannot account for it. **Next ac
 per-filter-stage counts (joint eligibility → Parent mask → calibrator veto, separately per arm).
 Those need node A's counts files; node A is stopped. **This is the first thing to run if node A
 is restarted**, ahead of any new arm.
+
+## 28. §27 RETRACTED — the filter is innocent; the samples are the problem
+
+Restarted node A to run the per-filter-stage decomposition §27 named as blocking, then stopped
+it again.
+
+| arm | S2 pre-mask | mask REMOVES | S3 survives | % of S2 |
+|---|---:|---:|---:|---:|
+| A3A-Y130F-clone2 vs nCas9-c1 | 166,557 | 146,716 | 19,841 | 11.9% |
+| A3A-Y130F-clone5 vs nCas9-c1 | 167,108 | 147,414 | 19,694 | 11.8% |
+| nCas9-clone2 vs nCas9-c1 | 228,774 | 149,120 | 79,654 | 34.8% |
+| A3A-Y130F-clone2 vs D10A-c6 | 166,677 | 146,963 | 19,714 | 11.8% |
+
+**§27 was wrong.** The mask removes a **constant** — 146,716 to 149,120, a spread of 2,404 —
+across arms whose starting pools differ by 62,217. Same germline set, same genome. **The filter
+does not hit one arm harder.** §27's candidate explanation is retracted.
+
+**What is actually happening is arithmetic:**
+
+```
+nCas9-clone2      228,774 - 149,120 = 79,654    comfortable margin
+A3A-Y130F-clone2  166,557 - 146,716 = 19,841    small residual of two large numbers
+```
+
+A 5% error in either term moves the A3A-Y130F number by **42%**; the same error moves nCas9 by
+14%. That's a **third, independent** reason to trust the A3A-Y130F arm less than the Y130G arm,
+alongside the 8.7× burden asymmetry and 13.8pp GC asymmetry of §25.1.
+
+**And the harder fact underneath.** Germline share of alt≥2 calls: A3A-Y130F **88%**, nCas9
+**65%**. The germline component is a constant ~148k, so a higher share just means fewer somatic
+calls: **the A3A-Y130F clones carry ~4.0× fewer somatic alt≥2 mutations than the deaminase-free
+nCas9 clones.** This makes the inversion *worse* — the active deaminase has four times fewer
+somatic mutations than the deaminase-free control. Untested candidates: library prep or
+duplicate marking differing between studies, real differences in clonal expansion, or
+later-passage clones. All need metadata not in hand.
+
+**Position unchanged:** no editor claim in either direction. The Y130G positive has passed every
+control I can build; the A3A-Y130F depletion now has three independent reasons for distrust. But
+distrusting the null is not believing the positive, and the pre-registration expecting no haA3A
+enrichment still stands unexplained.
