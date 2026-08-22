@@ -1141,3 +1141,43 @@ The summary block used `vals.ptp()`, removed in NumPy 2.x. It crashed *after* al
 lines had printed, so no data was lost and the summary was recomputed from the log. Fixed in
 `scripts/qa_donor_jackknife.py` (`np.ptp(vals)`); the copy on ai-chem2 still has the crashing
 version and needs the fixed file pushed when access returns.
+
+## 21. The critical-path arm — A3A-Y130F is NULL against a qualified calibrator
+
+**Harness validated first** on two qualified deaminase-free clones: burden 0.871/0.879/0.877/
+0.886 (cov ratios 0.997–1.005), matching the pre-registered 0.88 clone floor; endpoint B editor
+at or below calibrator at stem 7 and 8. A null below is not a broken pipeline.
+
+**Calibrator substitution, recorded before the run.** Both D10A clones fail gate v3 (5.15× and
+2.96× above the depth trend, limit 2.0×). nCas9-clone1 replaces them, with the cross-study
+objection measured rather than waved away: hom concordance Parent↔A3A-Y130F-clone2 **0.9871**
+against a **within-study reference of 0.9876**; depth 23.60 vs 25.02; depth-adjusted noise floor
+1.07× vs 0.99×. Better matched on every axis than D10A ever was.
+
+**Endpoint A — burden (≥3× bar applies):**
+
+| band | editor/Mb | calib/Mb | ratio | cov ratio | n_ed |
+|---|---:|---:|---:|---:|---:|
+| (25,35) | 79.8 | 490.5 | 0.163 | 0.998 | 7,318 |
+| (35,60) | 121.0 | 734.3 | 0.165 | 0.991 | 2,920 |
+
+The two shallower bands self-flagged UNMATCHED DEPTH at cov ratio 1.029 and the harness
+excluded them — it polices itself. **This is not "the editor does less damage":** nCas9-clone1
+is a high-burden clone (173.9–734.3/Mb) and A3A-Y130F-clone2 a low-burden one (79.0–121.0/Mb).
+Endpoint A shows **clone burden dominating**, the documented nCas9 clonal-somatic confound.
+
+**Endpoint B — banded Mantel-Haenszel, the method of record:**
+
+```
+stem 6    editor 0.920    calibrator 1.080    ed - cal = -0.160
+stem 7    editor 1.080    calibrator 1.381    ed - cal = -0.301
+```
+
+The pre-registered bar (stamped into the driver log at 07:45, hours before clone6 finished)
+required the editor to **exceed** the calibrator by **more than +0.11** in GC-adjusted MH OR.
+Observed −0.160 and −0.301 — **on the wrong side of the bar.** Unbanded agrees: editor
+0.899/1.034/1.069 vs calibrator 1.051/1.377/1.625, p_ed 0.974/0.385/0.358.
+
+**Verdict: NULL.** The test was exploratory and returns null; the framing is not being revised
+after the fact. n_hp_ed 302/119/43 at stems 6/7/8 unbanded; banded cells 4–60, and the stem-8
+banded cells are too thin to pool and are not quoted.
