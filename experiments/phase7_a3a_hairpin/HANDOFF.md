@@ -1965,3 +1965,47 @@ top 0.01%). **The editor does not** — 1.748× at the same depth, decaying to 0
 *the same model, at the same genomic scale, concentrates cancer APOBEC mutations 7.3× and
 base-editor off-targets 1.7×.* The biology is findable in a genome; the editor's 0.5–2% slice of
 it is not.
+
+## 35. §34 was 90.5% in-sample — fixed and rerun out-of-fold; adjusted, not invalidated
+
+**The attack, and it was warranted.** s14 fitted one model on all of v5 and scored the genome,
+then joined mutations from the *same 21 donors*. Exact overlap by (chrom, pos):
+
+```
+mutations landing on the TCW universe (s14's denominator)   92,823
+of those, ALSO v5 training positives                        83,977
+IN-SAMPLE FRACTION                                          90.5%
+```
+
+And the comparison was structurally unfair — the editor arm was scored by a model that had never
+seen a HEK293T site, while the cancer arm scored its own training data.
+
+**Fixed at the generator, rerun with held-out chromosome folds** (`s14b`): train on 4/5 of
+chromosomes, score the held-out fifth, assemble genome-wide out-of-fold scores.
+
+```
+                 top0.01%  top0.1%   top1%   top5%  top10%
+in-sample  (v1)    20.146    7.337   3.169   1.796   1.477
+OUT-OF-FOLD (v2)   16.698    6.819   3.007   1.665   1.372
+RANDOM     (v2)     1.077    1.056   1.044   1.001   1.003
+```
+
+**I said the leak "invalidates §34". That was too strong and I am correcting it.** The inflation
+is 7–17%, not a collapse. Raising the concern and fixing the generator were both right; asserting
+"invalidates" before the corrected number existed was not.
+
+**Why so little inflation at 90.5% overlap:** the model has six structural features and no site
+identity — there is nothing to memorise. It learns a hairpin-geometry function that generalises
+across chromosomes, which is itself evidence the signal is geometry rather than position.
+
+### 35.1 The corrected like-for-like comparison, both arms out-of-sample
+
+| panel | CANCER-OOF cap | CANCER-OOF enr | EDITOR cap | EDITOR enr | ratio |
+|---|---:|---:|---:|---:|---:|
+| 0.10% | 0.68% | **6.819** | 0.17% | 1.748 | 3.90× |
+| 1.00% | 3.01% | **3.007** | 1.15% | 1.146 | 2.62× |
+| 5.00% | 8.33% | **1.665** | 4.93% | 0.985 | 1.69× |
+
+Base rates within 2%. **The conclusion is unchanged and now rests on a fair test: the biology is
+findable in a whole genome; the editor's 0.5–2% slice of it is not.** The numbers behind it are
+6.819/3.007/1.665, not the 7.337/3.169/1.796 reported an hour ago.
