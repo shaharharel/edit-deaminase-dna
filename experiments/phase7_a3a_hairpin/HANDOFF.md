@@ -2090,3 +2090,31 @@ data arrived.
 variability — which is what this result demonstrates, and it matches the clonal-power bound of
 25–50 clones per arm from the other direction. YE1×2 adds a third variant but another *pair*, not
 the spread estimate needed.
+
+### 37.1 §37's weakest link, tested directly — it holds to 0.002
+
+§37 inferred VA's same-editor variability as +0.173 − (−0.066) = 0.239, the *difference of two
+independent comparisons*, which compounds two noise terms. The clean estimate is the direct
+same-editor pair — how the +0.075 Y130G floor was measured. Ran the identical comparison:
+
+| direct same-editor pair | ed MH | cal MH | \|ed−cal\| | sites ed/cal |
+|---|---:|---:|---:|---|
+| Y130G-clone1 vs Y130G-clone2 | 1.432 | 1.357 | **0.075** | 80,059 / 90,152 |
+| VA-clone1 vs VA-clone2 | 0.974 | 1.211 | **0.237** | 100,917 / 98,178 |
+
+**Direct 0.237 vs indirect 0.239 — agreement to 0.002.** §37's inference is confirmed, and VA's
+clones are burden-matched at 1.03×, so it is not a burden artefact.
+
+**Settled:** the +0.075 "clone-luck floor" quoted all session **was not a general estimate**. It
+was one variant's value and the *smaller* of the only two ever measured — 0.075 in Y130G, 0.237
+in VA, a 3.2× difference measured identically on qualified clones.
+
+**Not settled:** which floor is right. Against 0.075 the Y130G mean of +0.357 is 4.8σ; against
+0.237 it is 1.5σ. **Two estimates of a spread cannot choose between them.** This is now the
+binding constraint on the whole editor track from two independent directions — the clonal-power
+check said 25–50 clones per arm, and this says the same in the language of variance.
+
+**Honest state of the Y130G claim:** largest effect measured, replicated across its own clones,
+survived every stratification and audit on the checklist — *and* its margin over same-editor
+variability is somewhere between 1.5σ and 4.8σ with no way to narrow that from data in hand. I
+am not quoting the favourable end.
