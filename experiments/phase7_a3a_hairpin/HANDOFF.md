@@ -1717,3 +1717,47 @@ of 83,530 editor mutations — missing 99.96% — and the skill is gone by the p
 capture becomes meaningful. The defensible statement is about **mechanism**: a cancer-trained
 hairpin model ranks off-target sites in the one editor variant that shares its sequence
 preference, and fails or anti-transfers in two that do not.
+
+## 31. The VA panel closes it — the transfer is CONDITIONAL, and the condition was pre-stated
+
+**VA-clone1 panel, PCAWG-trained model, 200-permutation null:**
+
+| panel | n_ed | ed × | n_cal | cal × | gap | null sd | z |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 0.01% | 9 | 0.954 | 15 | 1.774 | −0.820 | 0.470 | −1.8 |
+| 0.10% | 113 | 1.198 | 114 | 1.348 | −0.151 | 0.155 | −1.0 |
+| 1.00% | 1,018 | 1.079 | 944 | 1.117 | −0.038 | 0.047 | −0.8 |
+| 5.00% | 4,618 | 0.979 | 4,077 | 0.964 | +0.014 | 0.020 | +0.7 |
+
+**Null at every depth**, |z| < 2 throughout; ed-specific 94,361 vs cal-specific 84,542 (1.12×
+matched), so not a burden artefact.
+
+### 31.1 The three-arm picture, complete and consistent
+
+```
+editor       hairpin excess         panel transfer
+Y130G        +0.318 / +0.396        +0.466 / +0.459   z=2.7  (z=5.0 at 0.01%)
+VA           -0.066                 -0.151            z=-1.0   NULL
+A3A-Y130F    -0.18  / -0.21         -0.483            anti-transfer
+```
+
+**The model transfers if and only if the target arm carries the property the model learned.**
+Conditional, not sporadic — and the condition was recorded before the confirming test ran.
+
+### 31.2 This dissolves the "biological inversion" open since §25
+
+§25/§25.1/§26/§27/§28 all circled the same puzzle: the engineered-safe variant showed signal and
+the active one didn't, which looked backwards. **It was never an inversion in the endpoint.**
+Y130G genuinely carries hairpin-structured off-targets; VA and A3A-Y130F don't; the model tracks
+that in all three directions **including the negative one**. An endpoint that returns a positive,
+a null and an anti-transfer in exactly the arms where hairpin excess is present, absent and
+absent is not a broken endpoint.
+
+### 31.3 What it still does not become
+**Burden prediction.** The z=5.0 panel captures 35 of 83,530 editor mutations — missing 99.96% —
+and the skill is gone by the panel size where capture becomes meaningful. That gap is untouched.
+
+**The defensible claim:** a cancer-trained hairpin model ranks base-editor off-target sites in
+the one editor variant whose off-targets are hairpin-structured, is null in a variant that is
+not, and anti-transfers in a third — a conditional, mechanistic transfer demonstrated across
+three arms with the condition stated in advance.
