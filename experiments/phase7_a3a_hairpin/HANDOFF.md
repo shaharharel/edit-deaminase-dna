@@ -1537,3 +1537,41 @@ None of it changes the pooled number, but quoting only the pooled value conceale
 **Still exploratory.** The band structure is consistent with a real effect concentrated where
 the data are — but "consistent with" is not "demonstrates", and the inversion against
 A3A-Y130F remains unexplained.
+
+### 25.3 Complexity stratification — check 4's unperformed half; the signal survives
+
+GC-decile stratification has been run all session; **complexity stratification never had** — and
+it is the check most likely to bite this signal, since hairpins *are* inverted repeats and
+inverted repeats sit in low-complexity sequence where alignment is worst.
+
+**Measure:** local TCW site density (universe sites within ±500bp). Computed from `pos` alone
+and **independent of every hairpin feature**, so unlike stratifying on stem length it is not
+circular.
+
+| dec | editor | calib | ed−cal | n_hp |
+|---:|---:|---:|---:|---:|
+| 0 *(least repetitive)* | 1.189 | 1.088 | +0.101 | 176 |
+| 1 | 1.245 | 1.039 | +0.206 | 185 |
+| 2 | 1.263 | 0.979 | +0.284 | 155 |
+| 3 | 1.529 | 1.001 | +0.528 | 216 |
+| 4 | 1.333 | 1.074 | +0.259 | 201 |
+| 5 | 1.316 | 1.013 | +0.303 | 194 |
+| 6 | 1.397 | 0.976 | +0.421 | 188 |
+| 7 | 1.473 | 1.283 | +0.190 | 166 |
+| 8 | 1.304 | 0.846 | +0.458 | 172 |
+| 9 *(most repetitive)* | 1.468 | 0.953 | +0.515 | 230 |
+
+**MH: editor 1.358, calibrator 1.022, ed−cal +0.336** — against GC-stratified 1.357 / 1.039 /
++0.318, **essentially identical**. Editor above calibrator in **10/10** deciles, clearing the
++0.11 bar in 9/10, n_hp 155–230 everywhere. An alignment artefact of low-complexity repeats
+would *concentrate* in the high-density deciles; it doesn't.
+
+**Caveat not pooled away:** there is a complexity trend, corr(decile, ed−cal) = **+0.594**, and
+decile 0 — the most complex sequence — gives **+0.101**, inside the bar and near the +0.075
+clone-luck floor. The effect is weakest exactly where complexity is highest.
+
+**Status:** every check on the standing list has now been run against this positive — gate A0 on
+both editor clones, burden matched to 1%, GC decile, complexity decile, measured clone-luck
+floor, same-day true-null validation, two-clone replication, monotone stem scaling, adequate n
+throughout — and none has moved it. Still exploratory, still no editor claim, inversion still
+unexplained.
