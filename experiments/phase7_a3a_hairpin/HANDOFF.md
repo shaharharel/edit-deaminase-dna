@@ -1761,3 +1761,44 @@ and the skill is gone by the panel size where capture becomes meaningful. That g
 the one editor variant whose off-targets are hairpin-structured, is null in a variant that is
 not, and anti-transfers in a third — a conditional, mechanistic transfer demonstrated across
 three arms with the condition stated in advance.
+
+## 32. RETRACTION of §31's framing — `stem` alone beats the cancer-trained model
+
+Y130G's defining property *is* hairpin excess, and the PCAWG model ranks by hairpin geometry —
+so the "transfer" may be that fact re-expressed as a ranking. Raced the trained model against
+rankings needing no training and no cancer data:
+
+| ranking | panel | n_ed | ed × | n_cal | cal × | gap |
+|---|---|---:|---:|---:|---:|---:|
+| PCAWG model | 0.01% | 35 | 4.190 | 12 | 1.424 | +2.766 |
+| **stem ALONE** | 0.01% | 31 | 3.711 | 8 | 0.949 | **+2.762** |
+| PCAWG model | 0.10% | 146 | 1.748 | 108 | 1.281 | +0.466 |
+| **stem ALONE** | 0.10% | 275 | 3.292 | 138 | 1.637 | **+1.655** |
+| PCAWG model | 1.00% | 956 | 1.144 | 927 | 1.100 | +0.045 |
+| **stem ALONE** | 1.00% | 1,331 | 1.593 | 903 | 1.071 | **+0.522** |
+
+PCAWG minus best-untrained: **+0.004 / −1.188 / −0.477**.
+
+`stem` is one integer read straight out of the universe file. It ties the trained model at
+0.01% and **beats it decisively** at the panel sizes that matter. **The cancer training
+contributes nothing and degrades the ranking.**
+
+**Retracted:** §31's "a cancer-trained hairpin model ranks base-editor off-target sites."
+**Survives:** the *conditional* pattern — ranking by hairpin structure separates editor from
+calibrator in Y130G (+2.76) and not in VA (−0.15) or A3A-Y130F (−0.48). But that is a statement
+about **hairpin geometry**, not cancer training, and the best ranker is the simplest feature.
+If a usable panel is ever built here it should be built from `stem`: 3.292× at 0.1% with n=275,
+better than anything the model produced at any depth.
+
+### 32.1 The editor data, and how confident the positives are
+WGS, clonal HEK293T, hg19, ~236M TCW universe sites/sample. PRJNA1042830 (Y130G×2, VA×2, YE1×2,
+nCas9×2, Parent, cov 21.8–27.9); PRJNA1006866 (A3A-Y130F×3, D10A×3, background, cov 25.0–40.0).
+
+Editor-specific positives: Y130G-c2 **83,530**, Y130G-c1 80,028, VA-c1 94,361, A3A-Y130F-c2
+19,841, A3A-Y130F-c5 19,694.
+
+**How confident are we these are editor and not endogenous? At the site level, not at all.**
+nCas9-clone1 — deaminase-free — yields **84,280** calibrator-specific sites, essentially the
+same number. The burden endpoint agrees: 0.922/0.944/0.959/0.978, at the clone floor, **no
+excess**. There is no count excess to attribute to the editor anywhere in this dataset; the only
+editor-attributable signal is **compositional** (hairpin fraction), never the number.
