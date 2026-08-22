@@ -1181,3 +1181,21 @@ Observed −0.160 and −0.301 — **on the wrong side of the bar.** Unbanded ag
 **Verdict: NULL.** The test was exploratory and returns null; the framing is not being revised
 after the fact. n_hp_ed 302/119/43 at stems 6/7/8 unbanded; banded cells 4–60, and the stem-8
 banded cells are too thin to pool and are not quoted.
+
+### 21.1 Caveat added on audit — endpoint B may be burden-affected too
+
+§21 said endpoint A is burden-confounded and read endpoint B as clean. I tested that split.
+
+nCas9-clone1 carries **6.1× the burden** of A3A-Y130F-clone2. Two nCas9 clones differing 12.3%
+in burden give near-identical enrichment, which first looked like proof that burden doesn't
+drive enrichment — **that over-claimed from n=2**. The implied elasticities are −0.361 / +0.270
+/ +0.243 at stems 6 / 7 / 8: **the sign isn't even consistent**, so with two clones the
+relationship isn't estimable. Extrapolating each stem's elasticity to the editor's 0.163 burden
+ratio predicts 2.023 / 0.843 / **1.046** against observed 0.899 / 1.034 / **1.069** — at stem 8
+a pure burden effect predicts almost exactly what was seen.
+
+**This does not overturn the null** — the pre-registered bar was missed in the wrong direction
+either way. It does correct the framing: the banded MH endpoint is **depth-matched but not
+burden-matched**, and endpoint B may be burden-affected too. Settling it needs deaminase-free
+clones spanning a burden range or a burden-matched comparison; neither exists, and D10A-clone10
+is same-study/same-protocol as the two already disqualified.
