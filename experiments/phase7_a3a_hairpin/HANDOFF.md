@@ -1199,3 +1199,30 @@ either way. It does correct the framing: the banded MH endpoint is **depth-match
 burden-matched**, and endpoint B may be burden-affected too. Settling it needs deaminase-free
 clones spanning a burden range or a burden-matched comparison; neither exists, and D10A-clone10
 is same-study/same-protocol as the two already disqualified.
+
+### 21.2 Two-clone replication, and a measured true-null floor on node A
+
+Both A3A-Y130F arms in `auto_advance_gc.log` had **crashed** at 09:28 on
+`counts_P66-D10A-clone6_chr1.npz` — the same `.partial.npz` mis-naming that stopped the
+critical-path driver. That bug cost two analyses, not one. Re-run after repair, against
+nCas9-clone1 (D10A-clone6 is disqualified):
+
+| arm | ed MH | cal MH | ed−cal | ed shift | cal shift | ed sites |
+|---|---:|---:|---:|---:|---:|---:|
+| **NULL** nCas9-clone2 vs nCas9-clone1 | 1.077 | 1.042 | **+0.035** | −2.4% | −1.2% | 79,654 |
+| A3A-Y130F-clone2 vs nCas9-clone1 | 0.760 | 1.041 | **−0.281** | −15.0% | −1.2% | 19,841 |
+| A3A-Y130F-clone5 vs nCas9-clone1 | 0.739 | 1.041 | **−0.302** | −14.5% | −1.2% | 19,694 |
+
+**Two independent editor clones agree to 0.021** — the first two-clone replication this arm
+has had, and not clone luck. Both sit far on the wrong side of the pre-registered bar (>+0.11)
+and far below a **measured** true-null floor of +0.035.
+
+**But the script's own diagnostic fires.** GC adjustment moves the editor column −15.0%/−14.5%
+and the calibrator only −1.2%: the arms are not compositionally comparable. Note the direction
+— adjustment makes the editor *more* depleted, so GC was **masking** part of the depletion, not
+manufacturing it. The editor arms also carry **4.6× fewer** specific sites (19.8k vs 90.8k),
+the burden asymmetry from §21.1.
+
+**Where it leaves the arm:** the null is replicated and sits outside a measured floor. What is
+*not* established is attribution — burden (4.6×) and GC composition (−15% vs −1.2%) both differ,
+and this estimator cannot separate either from a deaminase effect.
