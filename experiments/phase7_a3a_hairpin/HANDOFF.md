@@ -1575,3 +1575,35 @@ both editor clones, burden matched to 1%, GC decile, complexity decile, measured
 floor, same-day true-null validation, two-clone replication, monotone stem scaling, adequate n
 throughout — and none has moved it. Still exploratory, still no editor claim, inversion still
 unexplained.
+
+### 25.4 Mix-shift check — the effect is in both trinucleotides, and the null is flat in both
+
+`s7c` prints a trinucleotide breakdown labelled *"mix shift can imitate an editor effect"*; I
+had never read it for this arm.
+
+| arm | ctx | stem | editor | calib | ed−cal | n_hp |
+|---|---|---:|---:|---:|---:|---:|
+| Y130G-clone2 | TCA | 6/7/8 | 1.514 / 2.310 / 3.335 | 1.106 / 1.495 / 1.785 | +0.408 / +0.815 / **+1.550** | 1,152 / 604 / 309 |
+| Y130G-clone2 | TCT | 6/7/8 | 1.209 / 1.824 / 2.369 | 0.996 / 1.255 / 1.452 | +0.213 / +0.569 / **+0.917** | 917 / 471 / 210 |
+| Y130G-clone1 | TCA | 8 | 3.480 | 1.785 | +1.695 | 292 |
+| Y130G-clone1 | TCT | 8 | 2.775 | 1.452 | +1.323 | 215 |
+| **VALIDATION (null)** | TCA | 6/7/8 | — | — | **+0.069 / −0.075 / −0.057** | 801 / 333 / 144 |
+| **VALIDATION (null)** | TCT | 6/7/8 | — | — | **+0.031 / −0.022 / −0.048** | 679 / 278 / 109 |
+
+1. **In both trinucleotides**, both clones, every stem — a mix shift would put it in one only.
+2. **The null control is flat in both contexts**, ed−cal between −0.075 and +0.069.
+3. **TCA exceeds TCT consistently** (stem-8 ratios 1.41 and 1.25), the ordering A3A biology
+   predicts, and haA3A retains the APOBEC3A catalytic core.
+4. n ample everywhere.
+
+**The caution, in the same breath.** Point 3 is the seductive one and I am not leaning on it.
+"Consistent with A3A biology" is *exactly* the narrative the A3A-vs-A3B dichotomy died from —
+that claim was plausible too and still went +0.355 at n=53 → +0.079, p=0.44 at n=97. Structural
+consistency raises how *interesting* this is; it does not convert exploratory into finding.
+
+**Tally of checks passed:** gate A0 on both editor clones; burden matched to 1% (independently
+recomputed); GC decile; complexity decile; trinucleotide mix-shift; measured clone-luck floor;
+same-day true-null validation flat on every endpoint and breakdown; two-clone replication;
+monotone stem scaling; adequate n throughout. **Nothing on the checklist has moved it** — still
+exploratory, still no editor claim, inversion still unexplained. The result that would change
+this is **VA**, the other haA3A variant, aligning now.
