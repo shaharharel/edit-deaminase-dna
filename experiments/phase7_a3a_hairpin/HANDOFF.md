@@ -984,3 +984,40 @@ estimator's own floor and was still running at time of writing.
 GC adjustment moves **every** arm by 7–12%. Crude endpoint-B numbers across this project carry
 a GC-composition inflation of about that size, so **any crude OR near 1.1 is consistent with
 zero** once GC is controlled.
+
+### 17.2 The within-family null control — it sets the bar, and the bar is clone-luck
+
+eA3A-RL1-clone2 vs eA3A-RL1-clone1: two clones of the *same* editor, so any difference is
+clone-luck by construction. Three clones scored against the identical reference sample with
+the identical estimator:
+
+| arm | GC-adj MH | n_hp | 1 SE |
+|---|---:|---:|---:|
+| eA3A-RL1-clone2 — **same family as reference** | 0.947 | 3,273 | 2.5% |
+| Lj-BE-clone5 — cross-family | 0.976 | 3,579 | 2.4% |
+| Lj-BE-clone12 — cross-family | 1.057 | 6,874 | 2.1% |
+
+**No family effect.** If Lj-BE differed from eA3A as a family, both Lj-BE clones would sit
+above the same-family control by a similar margin. Clone5 is +0.029 (inside noise); clone12 is
++0.110. The two Lj-BE clones disagree with *each other* by 0.081 — more than clone5 differs
+from the null control. **Lj-BE arm closed, null, on a measured floor rather than an assumed
+one.**
+
+**The spread is 5.2× the counting error** (0.110 against a 1-SE counting error of 0.021), so it
+is not Poisson and **deeper sequencing will not shrink it**. Clone-to-clone variance sets the
+resolution of this endpoint, not read depth — the same wall the editor track hit from the other
+direction, where n_hp ≈ 1 per clone forces 25–50 clones per arm.
+
+**Estimator reproducibility — an internal check that passes.** The calibrator column is the
+same sample in all three runs and returned crude OR 1.070 / 1.069 / 1.070, MH 0.940 / 0.939 /
+0.940. Three independent invocations agreeing to three decimals: the estimator is stable, so
+the spread among editor arms is real clone variation, not run-to-run noise.
+
+### 17.3 Pre-registered bar for the critical-path run
+Stamped into `logs/auto_advance.log` at 07:45 UTC, **before the driver produced any number**:
+
+> A3A-Y130F-clone2 vs D10A-clone6 must exceed the calibrator by **more than 0.11 in GC-adjusted
+> MH OR** — the measured clone-luck spread — to count as an editor effect. Inside 0.11 will be
+> reported as null.
+
+The bar is empirical (three clones on one reference) and stricter than "above 1.0".
