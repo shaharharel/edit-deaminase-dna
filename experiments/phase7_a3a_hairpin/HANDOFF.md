@@ -1374,3 +1374,38 @@ direction.**
 
 **Not final:** the driver's GC-stratified arms and its within-family null control are still in
 flight. Every other arm this session moved 7–15% under GC adjustment.
+
+### 25.1 The GC check landed — it strengthens the positive, and inverts how §25 reads
+
+| comparison | ed−cal | GC shift ed/cal | sites ed vs cal |
+|---|---:|---|---|
+| true-null nCas9-c2 vs nCas9-c1 | +0.037/+0.003/−0.057 | — | — |
+| clone-luck Y130G-c1 vs Y130G-c2 | **+0.075** | 1.4% / 0.8% | 80,059 / 90,152 |
+| ARM Y130G-clone2 vs nCas9-c1 | **+0.318** | 0.8% / 1.2% | 90,513 / 90,517 |
+| ARM Y130G-clone1 vs nCas9-c1 | **+0.396** | 1.4% / 1.2% | 80,028 / 90,161 |
+
+GC adjustment moves the editor −0.8%/−1.4% and the calibrator −1.2% — **0.4pp asymmetry**,
+against 13.8pp for the A3A-Y130F arms. And the site counts are **matched to 0.004%**, so the
+burden asymmetry that dominated §21.1/§23.1 is absent here.
+
+**Control quality, side by side:**
+
+| axis | A3A-Y130F (the null) | Y130G (the positive) |
+|---|---|---|
+| burden asymmetry | 8.7× (19.7k vs 172k) | **1.00×** (90.5k vs 90.5k) |
+| GC-shift asymmetry | 13.8pp | **0.4pp** |
+| same study as calibrator | yes(D10A) / no(nCas9) | yes |
+| clone replication | 2 clones, 0.029 apart | 2 clones, 0.078 apart |
+| monotone in stem length | no | **yes**, 0.33 → 0.71 → 1.31 |
+
+**The positive is the better-controlled arm on every axis.** §25 framed the puzzle as "the
+engineered-safe variant shows signal, so something is wrong." The control quality points the
+other way: **it is the A3A-Y130F depletion that sits on the weak comparison**, not the Y130G
+enrichment.
+
+**What this is and is not.** The pre-registration said a positive means the endpoint is broken.
+The endpoint has now returned ≈0 on a true-null pair, +0.075 on a same-editor pair, and no GC
+sensitivity, all in the same run — "broken" does not describe that. This is **not** being
+converted into a confirmatory finding; it remains exploratory as pre-declared. What changed is
+which arm deserves scepticism. The biological inversion is still unexplained and **no editor
+claim is being made in either direction.**
