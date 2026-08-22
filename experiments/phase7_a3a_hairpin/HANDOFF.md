@@ -919,3 +919,24 @@ works. What fails is the transfer.
 - Both calibrators are cross-study (PRJNA1042830 vs PRJNA1006866). The within-study rerun
   against D10A-clone6 is queued and should be done before this is written up.
 - n_hit at top 0.1% is 16–17; the top-5% row is the one to read.
+
+### 16.1 The transfer result audited against its best alternative explanation — it survives
+
+A strong negative deserves a positive's scrutiny. The worry: the model ranks hairpin-rich
+sites high, hairpins favour AT-rich sequence, AT-rich sequence maps poorly — so the top-ranked
+sites might simply be where variants are hardest to call.
+
+- **In-distribution**: the scored universe is TCA 0.472 / TCT 0.528 and nothing else, matching
+  the training set exactly.
+- **No coverage confound, opposite direction**: the model's top 0.1% has mean coverage **26.66**
+  against 25.98 overall. Calling power is not what excludes them.
+- **Survives coverage banding**: editor 0.296× / 0.665× / 0.768× / 0.857× across the four bands,
+  calibrator 0.788× / 1.138× / 1.053× / 1.217×, gap negative in every band. Best-powered bands
+  (n_hit 48, 56) give 0.665× and 0.768×.
+
+**And the audit produced the mechanism.** The model's top 0.1% is **GC-rich (0.4562)** while the
+editor's called sites are **AT-shifted (0.3537–0.3784)**. What PCAWG taught the model about
+APOBEC mutagenesis in tumours is a sequence preference that does not describe where this editor
+deposits damage in HEK293T. The preference is non-monotone in score (top 5% is AT-rich at
+0.3554), so "the model likes GC" is too simple a summary — but the mismatch at the operating
+point is the concrete reason the transfer fails.
