@@ -852,3 +852,21 @@ Eight suspected stalls were investigated tonight and **all eight were slow patch
 self-resolved** (11–25 min, hard reads arriving in contiguous flowcell-ordered blocks). The
 cost of checking was ~2 min each; the cost of acting on one would have been ~16 h, since the
 worker writes a `FAILED` flag on a killed pipeline that **blocks automatic re-queueing**.
+
+### 15.8 A queue-level gap: the haA3A arm has no deaminase-free control
+
+All thirteen `SRR257250xx` samples are **one study** (PRJNA1006866): node A's A3A-Y130F ×3,
+D10A ×3 and background, plus node B's eA3A-RL1 ×3 and Lj-BE ×3. So **D10A-clone6/clone10 are
+the within-study calibrators for the node-B arms too** — the analyses run tonight used
+eA3A-clone1 as the comparator for Lj-BE, which is editor-vs-editor and was labelled "calib".
+Informative for the cross-family question, but not a calibrator comparison.
+
+The six queued `SRR26881532`-series samples (Y130G ×2, VA ×2, YE1 ×2) are a **third study with
+no deaminase-free control in either queue**. Since noise floors differ 4–14× between studies
+*after* depth normalisation, borrowing D10A or nCas9 would reproduce the cross-study confound
+that made the 05:20 preview uninterpretable.
+
+**So the standing haA3A pre-registration cannot be tested as specified**, and ~18 h of
+alignment is queued behind samples whose primary endpoint has no valid comparator. Either
+locate a deaminase-free control from that BioProject, or run the arm descriptive-only with the
+limitation stated up front.
