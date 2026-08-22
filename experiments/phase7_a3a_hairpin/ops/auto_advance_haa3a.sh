@@ -32,6 +32,22 @@ while :; do
 done
 echo "[$(ts)] both Y130G clones at 23/23. Running the arm."
 
+# --- STEP A0: qualify the calibrator BEFORE anything is computed against it ---------------
+# This gate exists on node A and I did not apply it here when I armed the arm -- the exact
+# "correct locally, not carried across" shape this project keeps hitting. The gate judges the
+# RAW NOISE FLOOR, which is a property of the sequencing, not of how much true background a
+# clone carries; it is what rejected D10A-clone1 (87.2% of alt>=1 sites below VAF 0.05).
+# nCas9-clone1 was pre-checked on node B's own counts at 2026-08-22 10:05 and QUALIFIED
+# (854,914 alt>=1, 53.0% sub-0.05, 0.89x peer median). Re-run here so the arm cannot proceed
+# against an unqualified calibrator if anything about the counts changes.
+if ! A3A_FEAT=$BASE/feat $PY $BASE/qualify_calibrator.py nCas9-clone1; then
+  echo "[$(ts)] *** CALIBRATOR nCas9-clone1 FAILED GATE A0 -- arm NOT run. ***"
+  echo "[$(ts)] Recording in BLOCKED.md rather than silently skipping."
+  echo "$(ts) haA3A arm: nCas9-clone1 failed calibrator gate A0, arm not run" >> $BASE/logs/BLOCKED.md
+  exit 2
+fi
+echo "[$(ts)] gate A0 passed: nCas9-clone1 qualified as calibrator."
+
 # 1. within-study VALIDATION first: deaminase-free vs deaminase-free. This must come back
 #    near the clone floor. If it does not, nothing downstream is interpretable.
 echo "[$(ts)] === VALIDATION: nCas9-clone2 vs nCas9-clone1 (both deaminase-free, same study)"

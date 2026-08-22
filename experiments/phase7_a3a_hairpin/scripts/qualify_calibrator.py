@@ -24,10 +24,12 @@ clone1 is 7.5x the next highest and its sub-0.05 fraction sits far outside a 51.
 Both criteria are set from that spread, not from a guess, and both catch clone1 while passing
 all five sound samples -- which is the validation run at the bottom of this file.
 """
-import sys
+import os, sys
 import numpy as np
 
-FEAT = "/mnt/data/a3a/feat"
+# FEAT is env-overridable so ONE file serves both nodes. Hardcoding a node-A path and
+# copying the file to node B is how this project got five "wrong artifact" errors.
+FEAT = os.environ.get("A3A_FEAT", "/mnt/data/a3a/feat")
 CH = [str(i) for i in range(1, 23)] + ["X"]
 CAL = sys.argv[1] if len(sys.argv) > 1 else "P66-D10A-clone6"
 PEERS = ["P66-A3A-Y130F-clone2", "P66-A3A-Y130F-clone5", "nCas9-clone1", "nCas9-clone2", "Parent"]
