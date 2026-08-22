@@ -2049,3 +2049,44 @@ from 21 PCAWG donors and evaluated **out-of-fold across whole chromosomes**, con
 APOBEC-context mutations **6.819×** in the top 0.1% of a 236M-site genome and captures **13.72%**
 in the top 10%, beating every untrained ranking by 3.4×. **The same model, applied to
 base-editor off-targets at the same genomic scale, reaches 1.748× and is beaten by `stem`.**
+
+## 37. VA-clone2 is POSITIVE and disagrees with VA-clone1 in sign — this damages §25
+
+| arm | GC-adj MH ed | cal | ed−cal | complexity ed−cal | pre-reg category |
+|---|---:|---:|---:|---:|---|
+| VA-clone1 vs nCas9-c1 | 0.975 | 1.041 | **−0.066** | −0.066 | **NULL** |
+| VA-clone2 vs nCas9-c1 | 1.215 | 1.042 | **+0.173** | +0.197 | **POSITIVE** |
+| Y130G-clone2 vs nCas9 | 1.357 | 1.039 | +0.318 | +0.336 | POSITIVE |
+| Y130G-clone1 vs nCas9 | 1.437 | 1.041 | +0.396 | — | POSITIVE |
+
+§29 pre-registered three outcomes and committed to reporting whichever landed. **A fourth
+landed: the clones disagree.** Neither category applies; I am not picking the preferred one and
+not retrofitting a convenient fourth.
+
+### 37.1 And this damages the Y130G result
+
+```
+same-editor clone spread, Y130G:  0.078   (+0.318 vs +0.396)
+same-editor clone spread, VA:     0.239   (-0.066 vs +0.173)
+clone-luck floor quoted all session: +0.075
+```
+
+**That floor was measured on Y130G's own clone pair — the tighter of the two.** VA's same-editor
+spread is **3.1×** Y130G's and **3.2×** the floor everything has been compared against. If 0.239
+is the true same-editor variability, Y130G's mean of +0.357 sits **1.5σ** above it, not the 4.8σ
+it appeared against +0.075.
+
+**This cannot be dismissed as "VA is noisy."** Both VA clones passed gate A0 on the corrected
+depth-adjusted criterion, ran against the same calibrator, through the same audit chain, on the
+same day. Discarding the inconvenient one is precisely what the QA discipline exists to prevent.
+
+**Effect on the record:** §25–§25.5 reported the Y130G positive as surviving every check, with
++0.075 as the yardstick. **That yardstick is now in doubt.** The effect is still the largest
+measured and still replicated across its own clones, but the margin over same-editor variability
+is much smaller than reported. The position is weaker than an hour ago, and it moved because more
+data arrived.
+
+**What would settle it:** more clones per variant. Two is not enough to estimate same-editor
+variability — which is what this result demonstrates, and it matches the clonal-power bound of
+25–50 clones per arm from the other direction. YE1×2 adds a third variant but another *pair*, not
+the spread estimate needed.
