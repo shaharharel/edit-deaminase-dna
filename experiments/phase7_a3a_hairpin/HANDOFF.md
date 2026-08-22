@@ -1802,3 +1802,38 @@ nCas9-clone1 — deaminase-free — yields **84,280** calibrator-specific sites,
 same number. The burden endpoint agrees: 0.922/0.944/0.959/0.978, at the clone floor, **no
 excess**. There is no count excess to attribute to the editor anywhere in this dataset; the only
 editor-attributable signal is **compositional** (hairpin fraction), never the number.
+
+## 33. "Is it learnable at all?" — yes, 4.422×; the deaminase-free control is 2.350×
+
+First time training **on the editor's own sites**. Held-out chromosome, negatives matched on
+trinucleotide *and* strand, base rate 0.0909 (ceiling 11.00×), random baseline beside every
+number. This is the **ceiling** of what this data supports — no transfer, no borrowing.
+
+| topK | ED enr | ED rand | CAL enr | CAL rand | ED/CAL | σ |
+|---|---:|---:|---:|---:|---:|---:|
+| 0.1% | **4.422** | 0.935 | **2.350** | 1.080 | 1.88 | 7.3 |
+| 1.0% | 1.898 | 0.928 | 1.538 | 1.026 | 1.23 | 5.6 |
+| 5.0% | 1.359 | 0.995 | 1.238 | 1.002 | 1.10 | 4.9 |
+
+1. **Yes, learnable** — 4.422× at top 0.1% against a random 0.935.
+2. **But the deaminase-free calibrator is also learnable, at 2.350×.** nCas9 has no deaminase, so
+   whatever the model finds there is endogenous. **Most of what is learnable is not the editor.**
+3. **The editor increment is real but modest** — 1.88× over the endogenous baseline at 7.3σ,
+   decaying 1.88 → 1.23 → 1.10 with panel size, like every other signal here.
+
+### 33.1 In-domain training does not fix capture
+
+```
+top 0.1%:    918 sites hold   369 of 83,530 editor mutations =  0.44% captured
+top 1.0%:  9,188 sites hold 1,585 of 83,530                  =  1.90% captured
+top 5.0%: 45,941 sites hold 5,675 of 83,530                  =  6.79% captured
+```
+
+At the depth where the model is strongest it holds **0.44%** of the editor's mutations.
+Enrichment and capture are in different places **no matter what you train on** — true for the
+PCAWG model and equally true for a model trained on the editor's own data, which makes it a
+property of **the data**, not the training source.
+
+**What this settles.** The obstacle to a usable safety panel is not the model, the architecture,
+or the training set. It is that **the editor's mutations are diffuse**: the top 0.1% of the most
+predictable sites in the genome contains one in every 226 of them.
