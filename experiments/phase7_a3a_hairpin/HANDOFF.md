@@ -2009,3 +2009,43 @@ across chromosomes, which is itself evidence the signal is geometry rather than 
 Base rates within 2%. **The conclusion is unchanged and now rests on a fair test: the biology is
 findable in a whole genome; the editor's 0.5–2% slice of it is not.** The numbers behind it are
 6.819/3.007/1.665, not the 7.337/3.169/1.796 reported an hour ago.
+
+## 36. The §32 attack, aimed at the cancer result — it goes the opposite way
+
+§32 retracted the editor "transfer" because `stem` alone beat the trained model. Never run on
+the cancer genomic result until now. If `stem` reached ~6.8× there too, §35 would be about a
+hairpin annotation, not a model.
+
+**It does not. In cancer the model wins decisively:**
+
+| panel | model | stem | hp_score | model − best untrained |
+|---|---:|---:|---:|---:|
+| 0.01% | **16.698** | 2.370 | 6.787 | **+9.911** |
+| 0.10% | **6.819** | 1.982 | 3.534 | **+3.286** |
+| 1.00% | **3.002** | 1.441 | 1.563 | +1.439 |
+| 5.00% | 1.665 | 1.203 | 1.265 | +0.401 |
+| 10.00% | 1.372 | 1.143 | 1.218 | +0.154 |
+
+All out-of-fold, same 92,823 mutations, same 236,482,055 sites.
+
+### 36.1 The contrast with the editor is the actual result
+
+```
+                    model      stem alone    verdict
+CANCER  top 0.1%    6.819x        1.982x     MODEL WINS by 3.4x
+EDITOR  top 0.1%    +0.466        +1.655     STEM WINS -- §32 retraction
+```
+
+In cancer there is enough signal that a learned combination of six structural features
+substantially beats any single one. In the editor arm there is so little signal that the learned
+combination performs **worse** than the best raw feature — which is what fitting noise looks
+like. **§35 survives and is strengthened**: the cancer result is about a model doing something an
+annotation cannot; the editor result was not. Both verdicts came from the same test run in both
+places, which was only possible because it was run on the editor first, where it hurt.
+
+### 36.2 The project's claim, stated precisely
+A gradient-boosted model over six DNA-structure features, trained on APOBEC3-family mutations
+from 21 PCAWG donors and evaluated **out-of-fold across whole chromosomes**, concentrates
+APOBEC-context mutations **6.819×** in the top 0.1% of a 236M-site genome and captures **13.72%**
+in the top 10%, beating every untrained ranking by 3.4×. **The same model, applied to
+base-editor off-targets at the same genomic scale, reaches 1.748× and is beaten by `stem`.**
