@@ -81,13 +81,16 @@ print(f"  full-data value                {full:.3f}x")
 print(f"  jackknife mean                 {vals.mean():.3f}x")
 print(f"  jackknife sd                   {vals.std(ddof=1):.3f}")
 print(f"  jackknife min / max            {vals.min():.3f} / {vals.max():.3f}")
-print(f"  spread (max-min)               {vals.ptp():.3f}")
+# numpy 2.x removed ndarray.ptp(); np.ptp() is the portable form. The original
+# crashed HERE, after all 21 replicate lines had already printed -- the data
+# survived, only the summary died. Recovered by recomputing from the log.
+print(f"  spread (max-min)               {np.ptp(vals):.3f}")
 n_d = len(vals)
 se = np.sqrt((n_d - 1) / n_d * ((vals - vals.mean()) ** 2).sum())
 print(f"  jackknife SE on the estimate   {se:.3f}")
 print(f"\n  project random-baseline noise floor is ~12% of the value = {0.12*full:.3f}")
-print(f"  spread / floor = {vals.ptp()/(0.12*full):.2f}x   ->  "
-      f"{'DONOR-ROBUST' if vals.ptp() < 0.12*full else 'DONOR-SENSITIVE, say so'}")
+print(f"  spread / floor = {np.ptp(vals)/(0.12*full):.2f}x   ->  "
+      f"{'DONOR-ROBUST' if np.ptp(vals) < 0.12*full else 'DONOR-SENSITIVE, say so'}")
 worst = res[int(np.argmin(vals))]
 print(f"  most influential donor: {worst[0]} -- removing it gives {worst[1]:.3f}x "
       f"({worst[1]-full:+.3f} vs full)")
