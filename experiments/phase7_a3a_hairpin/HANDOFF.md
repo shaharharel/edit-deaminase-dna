@@ -1639,3 +1639,34 @@ editor's is 2.2× the calibrator's.
 The concern resolves in the direction that does *not* help the headline stand, which is the only
 kind of resolution worth trusting. Position unchanged: exploratory, no editor claim, inversion
 unexplained.
+
+## 29. VA arm armed with a pre-registered discriminating prediction
+
+VA-clone1 lands within the hour and **nothing would have run it** — the haA3A driver was
+Y130G-only and had already exited. The clone7 driver taught this expensively: armed without
+gate A0, it fired on a clone carrying 62× its siblings' specific sites and its output had to be
+discarded.
+
+`ops/auto_advance_va.sh` (verified running by the log it writes) processes each VA clone as it
+completes and, per clone: **runs gate A0 on the editor clone itself** — the clone7 lesson was
+that I gated the calibrator and never the editor — then on the calibrator, then s7c_editor,
+GC-stratified, complexity-stratified, and the strand + read-orientation audit. Every check the
+Y130G positive had to pass, applied from the start rather than retrofitted over five ticks.
+
+**Pre-registration, written into the driver before the data exists.** The standing expectation
+is **unchanged**: haA3A was engineered for near-background off-target, so the pre-declared
+expectation is still **no enrichment**. Y130G contradicting it does not license flipping the
+expectation for VA. What is added is a **discriminating prediction**, whose entire value is that
+it is recorded now:
+
+- **VA positive** (ed−cal > +0.11, near Y130G's +0.318/+0.396) → the effect tracks the haA3A
+  **class**: two independent variants, four clones.
+- **VA null** (inside ±0.11) → Y130G's positive is **Y130G-specific**; the class expectation
+  survives and Y130G becomes a single-variant anomaly needing its own explanation.
+- **VA negative** (< −0.11, like A3A-Y130F's −0.18/−0.21) → the endpoint produces
+  variant-specific **signs** with no biological ordering, which is evidence **the endpoint is the
+  problem** — exactly what the pre-registration warned.
+
+Committed to reporting whichever lands and to not reinterpreting the categories afterwards.
+Every check on Y130G was retrofitted after a surprising number; retrofitted checks are worth
+less than pre-committed ones however carefully done.
