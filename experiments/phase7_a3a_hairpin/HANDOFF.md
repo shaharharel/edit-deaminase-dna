@@ -1409,3 +1409,27 @@ sensitivity, all in the same run — "broken" does not describe that. This is **
 converted into a confirmatory finding; it remains exploratory as pre-declared. What changed is
 which arm deserves scepticism. The biological inversion is still unexplained and **no editor
 claim is being made in either direction.**
+
+## 26. The 3-way driver fired on an ungated clone; the 3-way test is impossible
+
+`auto_advance_clone7.sh` was armed at 04:13 — before gate A0 was built into drivers — and fired
+at 12:54. **It calls no calibrator gate**: the same "correct locally, not carried across" defect
+fixed for the haA3A driver, still present here.
+
+**clone7 is disqualified, and not marginally:** cov 38.77, alt≥1 14,818,183 → **7.72×** above
+the peer depth trend, 91.3% sub-VAF-0.05. And unlike the D10A clones — whose defect lived
+entirely in the discarded alt=1 stratum — **clone7's excess persists into the analysis
+stratum**: 1,235,414 specific sites (alt≥2, Parent-masked) against clone2's 20,010 and clone5's
+19,899. **62× its own siblings.** It belongs with P66-background (1,490,210 specific, also
+disqualified on both strata).
+
+**Its output is therefore not interpretable.** The 3-way sharing run gave private n=1,359,224 /
+2-of-3 n=24,184 / ALL-3 n=143,580, but clone7 contributes 1.24M of that 1.36M private class.
+Not quoted. **And it cannot be repaired** — a 3-way test needs three qualified clones and this
+arm has two; a 2-way test cannot separate systematic artefact from shared ancestry, the
+limitation that killed the earlier A3A-Y130F sharing claim. **The 3-way test on this arm is
+impossible, not pending.**
+
+**The useful part of that run:** the clonal-power check gives expected n_hp at VAF≥0.35 of
+**0.6–1.7 across all nine samples** — powerless throughout. The standing bound (25–50 clones per
+arm) is now measured on nine samples rather than inferred.
