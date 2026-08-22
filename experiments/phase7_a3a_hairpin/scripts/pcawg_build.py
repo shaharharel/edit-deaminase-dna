@@ -197,6 +197,38 @@ def step_donor_stats(d):
 def step_tetra(d, genome):
     """-2 base for YTCA/RTCA discrimination (A3A vs A3B)."""
     log("computing tetranucleotide (-2) context for A3A/A3B split")
+    # ========================================================================
+    # HARD STOP (added 2026-08-22 QA). THIS FUNCTION IS BUG 2 AND IS STILL WRONG.
+    #
+    # The branch below chooses the -2 base on `r == "C"`. But d["ref"] is ALREADY
+    # pyrimidine-oriented (see step_donor_stats: `is_c = d["ref"] == "C"`), so the
+    # else-branch is effectively dead code: minus-strand C mutations also take the
+    # "C" branch and read seq[p-3] on the PLUS strand, which is the +2 position in
+    # oriented space and uncomplemented. ~HALF of all sites get a wrong -2 base,
+    # which corrupts every YTCA/RTCA number and therefore the A3A-vs-A3B donor split.
+    #
+    # This is the WRITER of the two corrupt artifacts -- minus2.npy and the
+    # unsuffixed a3a_donor_ranking.tsv. The v1-ranking READERS were guarded first;
+    # the writer is the more dangerous one, because rerunning it silently
+    # regenerates the corruption under the same filenames.
+    #
+    # THE CORRECT IMPLEMENTATION IS fix_tetra.py, which derives strand from the
+    # reference base (C on plus = 0, G on plus = 1) and complements the -2 base in
+    # strand-oriented space. It consumes snvs.npz, which step_parse has ALREADY
+    # written by the time this runs, so stopping here loses nothing: run
+    # fix_tetra.py next.
+    #
+    # Kept unrepaired on purpose -- rewriting it would erase the record of bug 2.
+    # Set A3A_ALLOW_BROKEN_TETRA=1 only to reproduce the bug deliberately.
+    # ========================================================================
+    import os as _os, sys as _sys
+    if not _os.environ.get("A3A_ALLOW_BROKEN_TETRA"):
+        _sys.exit(
+            "REFUSING TO RUN step_tetra: it branches on ref=='C' but ref is already "
+            "pyrimidine-oriented, so ~half of all -2 bases are wrong (bug 2). "
+            "snvs.npz has been written; run fix_tetra.py to produce the correct -2 "
+            "context and a3a_donor_ranking_v2.tsv. "
+            "Set A3A_ALLOW_BROKEN_TETRA=1 to override deliberately.")
     m2 = []
     for c, p, r in zip(d["chrom"], d["pos"], d["ref"]):
         seq = genome[c]
