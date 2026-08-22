@@ -1226,3 +1226,34 @@ the burden asymmetry from §21.1.
 **Where it leaves the arm:** the null is replicated and sits outside a measured floor. What is
 *not* established is attribution — burden (4.6×) and GC composition (−15% vs −1.2%) both differ,
 and this estimator cannot separate either from a deaminase effect.
+
+## 22. Every PRJNA1006866 control fails the noise floor; the editors don't
+
+P66-background reached 23/23 — the same-study control the A3A-Y130F arm was missing. It is
+**disqualified at 9.71×** above the peer depth trend (16,960,881 alt≥1 sites, 20× the editors'
+count). Parent remains a valid germline mask for it (hom concordance 0.9802); the sample's own
+noise floor is what fails.
+
+| sample | study | role | cov | alt≥1 | resid | verdict |
+|---|---|---|---:|---:|---:|---|
+| nCas9-clone2 | PRJNA1042830 | control | 23.63 | 780,594 | 0.97× | qualified |
+| nCas9-clone1 | PRJNA1042830 | control | 23.60 | 854,914 | 1.07× | qualified |
+| Parent | PRJNA1042830 | control | 29.29 | 1,135,489 | 1.02× | qualified |
+| A3A-Y130F-clone2 | PRJNA1006866 | **editor** | 25.02 | 864,617 | 0.99× | — |
+| A3A-Y130F-clone5 | PRJNA1006866 | **editor** | 25.73 | 861,941 | 0.95× | — |
+| D10A-clone1 | PRJNA1006866 | control | 31.36 | 6,457,037 | 5.15× | DISQUALIFIED |
+| D10A-clone6 | PRJNA1006866 | control | 39.26 | 5,837,065 | 2.96× | DISQUALIFIED |
+| P66-background | PRJNA1006866 | control | 37.12 | 16,960,881 | 9.71× | DISQUALIFIED |
+
+**The split is by role, inside one study** — PRJNA1006866 controls 2.96–9.71× (all fail),
+PRJNA1006866 editors 0.95–0.99× (both clean), PRJNA1042830 0.97–1.07× (all clean). It is not
+"that study is bad."
+
+**Consequence 1.** There is no usable within-study control for the A3A-Y130F arm. The
+cross-study nCas9 substitution in §21/§21.2 is the only option, not a convenience.
+
+**Consequence 2, the serious one.** A systematic control-vs-editor split *inside* a single
+study points at **processing, not biology**. A 20× gap in alt≥1 at similar depth is not subtle.
+If the three controls were prepared or sequenced differently from the two editors, any
+editor-vs-control contrast within PRJNA1006866 is confounded by that — and the whole
+PRJNA1006866 control set should be treated as unusable rather than merely noisy.
