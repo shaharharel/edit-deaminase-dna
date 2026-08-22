@@ -1021,3 +1021,36 @@ Stamped into `logs/auto_advance.log` at 07:45 UTC, **before the driver produced 
 > reported as null.
 
 The bar is empirical (three clones on one reference) and stricter than "above 1.0".
+
+## 18. Coverage-matched negatives — the last Phase-1–6 confound, controlled; signal survives
+
+Negatives were matched on donor+trinuc+strand but **not** on local coverage/mappability.
+`a3a_trainset_v5cov.npz` adds coverage decile to the *same* matching key (preserving trinuc and
+strand rather than replacing them) and drops the ~29k negatives that cannot be matched:
+923,989 → 895,054 rows, same 83,999 positives, base rate 0.0909 → 0.0938.
+
+Held-out **chromosome** folds; random baseline beside every number:
+
+| block | AUROC | top 0.1% | RANDOM | ratio |
+|---|---:|---:|---:|---:|
+| hairpin_nogc | 0.5266 | 4.905× | 1.131 | 4.34 |
+| gc_only | 0.5187 | **1.000×** | 0.857 | 1.17 |
+| hairpin_only | 0.5375 | 4.905× | 1.024 | 4.79 |
+| sequence_only | 0.6226 | 4.000× | 1.095 | 3.65 |
+| hairpin_nogc+sequence | 0.6232 | **5.119×** | 1.012 | 5.06 |
+| hairpin+sequence | 0.6244 | 5.096× | 0.929 | 5.49 |
+
+- **Enrichment survives**: 5.119× against the pre-matching 4.960× — slightly higher, not lower.
+- **AUROC survives**: 0.6244 vs 0.6205.
+- **`gc_only` gives exactly 1.000×** — GC alone has zero tail concentration, a clean internal
+  control and the direct answer to "is the tail just GC?".
+- **Ceiling recomputed** as the build script demands: base rate 0.0938 → ceiling **10.661×**,
+  not 11.000. The best block is 48.0% of ceiling, so not leakage.
+- **Random baselines span 0.857–1.131** at n=895 (±13%), matching the recorded ~12% noise
+  floor. Differences below that are not differences.
+- **AUROC/tail dissociation again**: `hairpin_only` near-chance AUROC 0.5375 but 4.905× tail;
+  `sequence_only` better AUROC 0.6226 but worse tail 4.000×.
+
+**Effect on §16.** The transfer test trained on v5 (unmatched). This shows what v5 learns is not
+a coverage artefact, so the 5.369× in-sample positive control rests on controlled ground —
+"the model works; the transfer does not" is better supported after this than before.
