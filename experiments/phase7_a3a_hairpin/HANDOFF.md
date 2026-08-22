@@ -1044,7 +1044,8 @@ Held-out **chromosome** folds; random baseline beside every number:
 - **AUROC survives**: 0.6244 vs 0.6205.
 - **`gc_only` gives exactly 1.000×** — GC alone has zero tail concentration, a clean internal
   control and the direct answer to "is the tail just GC?".
-- **Ceiling recomputed** as the build script demands: base rate 0.0938 → ceiling **10.661×**,
+- **Ceiling recomputed** as the build script demands: base rate 0.0938 → ceiling **10.656×** (exact 1/mean; a 10.661 computed from
+  the rounded base rate appeared in an earlier draft and is superseded),
   not 11.000. The best block is 48.0% of ceiling, so not leakage.
 - **Random baselines span 0.857–1.131** at n=895 (±13%), matching the recorded ~12% noise
   floor. Differences below that are not differences.
@@ -1099,6 +1100,15 @@ The open caveat: v5 carries the transfer test's positive control, the architectu
 recommendation and the 5.280× baseline, and rests on 21 donors. Every error bar quoted from it
 was a held-out-**chromosome** bar — spatial stability, saying nothing about whether one
 person's mutations carry the tail.
+
+**Read the value carefully — 5.148× appears twice in this document meaning two different
+things.** §14's architecture table lists 5.148× as the *85-feature* `hairpin_nogc+sequence`
+block. The jackknife below reports 5.148× as the *86-feature* `hairpin+sequence` full-data
+reference. These are a numerical coincidence, not a mislabelling: the jackknife script builds
+all 6 hairpin features plus 80 sequence features and its log prints `X (923989, 86)`, which
+settles which block it ran. At n=923 the enrichment is quantised in ~0.0119 steps, so
+collisions are possible; the 86-feature block differing from §14's 5.280× by 11 positives is
+ordinary run-to-run variation from early stopping's internal validation split.
 
 ```
 full-data value              5.148x

@@ -15,6 +15,29 @@ FIX: recover each positive's strand from the reference, sample negatives per
 strand-oriented space (reverse-complement the window for minus-strand sites).
 Positives and negatives are then exchangeable except for biology.
 """
+
+# ============================================================================
+# HARD STOP (added 2026-08-22 QA). DO NOT REMOVE WITHOUT READING THIS.
+#
+# This script reads a3a_donor_ranking.tsv -- the V1 ranking, whose ytca_frac column is
+# CORRUPT. Measured: it differs from v2 for 1,611 of 1,636 shared donors, max |diff| 0.3175,
+# and no donor in it reaches ytca>=0.70 at all. Consuming it is BUG 5: it cost 94 of 158
+# eligible donors and 1.33M of 8.75M positives. The selected set was a strict SUBSET of the
+# correct one, so nothing was contaminated -- it was silently STARVED, which is worse,
+# because starvation looks like a normal run.
+#
+# This file is kept as the RECORD of what bug 5 was. It is deliberately NOT repointed at v2:
+# rewriting it would erase the evidence. Its v2-reading successors are pcawg_stage2c.py,
+# pcawg_stage2d.py, pcawg_stage2e.py and pcawg_stage2f.py -- use those.
+#
+# Set A3A_ALLOW_V1_RANKING=1 only if you are deliberately reproducing the bug.
+# ============================================================================
+import os as _os, sys as _sys
+if not _os.environ.get("A3A_ALLOW_V1_RANKING"):
+    _sys.exit(
+        "REFUSING TO RUN: this script consumes the v1 donor ranking (corrupt ytca_frac, bug 5). "
+        "Use pcawg_stage2c/d/e/f.py, which read a3a_donor_ranking_v2.tsv. "
+        "Set A3A_ALLOW_V1_RANKING=1 to override deliberately.")
 import os, time
 import numpy as np
 
