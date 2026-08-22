@@ -1,0 +1,568 @@
+<title>Does a cancer-trained model predict base-editor off-targets?</title>
+<style>
+:root{
+  --ground:#F7F8F6;
+  --surface:#FFFFFF;
+  --ink:#16201C;
+  --muted:#5C6B64;
+  --faint:#8A9691;
+  --rule:#D9DFD9;
+  --rule-soft:#E9EDE9;
+  --accent:#0F6E4E;
+  --accent-soft:#E2EFE8;
+  --null:#8A6A2F;
+  --null-soft:#F2EADA;
+  --gauge-track:#E4E9E4;
+  --shadow:0 1px 2px rgba(22,32,28,.05),0 8px 24px -18px rgba(22,32,28,.4);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#101512;
+    --surface:#161C19;
+    --ink:#E7EDE9;
+    --muted:#9AA8A1;
+    --faint:#6E7C76;
+    --rule:#2A332E;
+    --rule-soft:#202723;
+    --accent:#5CC697;
+    --accent-soft:#172B22;
+    --null:#C9A45E;
+    --null-soft:#2A2419;
+    --gauge-track:#232A26;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -18px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#101512;
+  --surface:#161C19;
+  --ink:#E7EDE9;
+  --muted:#9AA8A1;
+  --faint:#6E7C76;
+  --rule:#2A332E;
+  --rule-soft:#202723;
+  --accent:#5CC697;
+  --accent-soft:#172B22;
+  --null:#C9A45E;
+  --null-soft:#2A2419;
+  --gauge-track:#232A26;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -18px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16.5px;
+  line-height:1.62;
+  margin:0;
+  padding:0 1.5rem 6rem;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:78rem;margin:0 auto}
+.col{max-width:41rem}
+
+/* ---------- masthead ---------- */
+header.mast{
+  padding:4.5rem 0 2.25rem;
+  border-bottom:1px solid var(--rule);
+  display:flex;flex-direction:column;gap:1.25rem;
+}
+.eyebrow{
+  font-family:ui-monospace,"SF Mono",SFMono-Regular,"Cascadia Code",Menlo,Consolas,monospace;
+  font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);display:flex;flex-wrap:wrap;gap:.5rem .9rem;
+}
+.eyebrow span{white-space:nowrap}
+h1{
+  font-family:ui-serif,"Iowan Old Style","Source Serif 4",Charter,Georgia,serif;
+  font-weight:600;font-size:clamp(2.1rem,4.4vw,3.1rem);line-height:1.08;
+  letter-spacing:-.018em;margin:0;text-wrap:balance;max-width:22ch;
+}
+.standfirst{font-size:1.12rem;color:var(--muted);margin:0;max-width:46rem;text-wrap:pretty}
+.standfirst strong{color:var(--ink);font-weight:600}
+
+/* ---------- generic sections ---------- */
+section{padding-top:3.25rem}
+h2{
+  font-family:ui-serif,"Iowan Old Style","Source Serif 4",Charter,Georgia,serif;
+  font-weight:600;font-size:1.5rem;letter-spacing:-.012em;line-height:1.2;
+  margin:0 0 .35rem;text-wrap:balance;
+}
+h2 .num{
+  font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  font-size:.72rem;color:var(--faint);letter-spacing:.1em;
+  display:block;margin-bottom:.5rem;font-weight:400;
+}
+.lede{color:var(--muted);margin:.1rem 0 1.5rem;max-width:41rem}
+p{margin:0 0 1rem;max-width:41rem;text-wrap:pretty}
+.col p:last-child{margin-bottom:0}
+strong{font-weight:640}
+em{font-style:italic}
+
+/* ---------- the instrument table ---------- */
+.tablecard{
+  background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+  box-shadow:var(--shadow);overflow-x:auto;margin-top:.5rem;
+}
+table{border-collapse:collapse;width:100%;min-width:44rem;
+  font-variant-numeric:tabular-nums;font-size:.92rem}
+caption{
+  text-align:left;padding:1.1rem 1.35rem .85rem;color:var(--muted);
+  font-size:.85rem;line-height:1.5;border-bottom:1px solid var(--rule-soft);
+}
+caption b{color:var(--ink);font-weight:640}
+th,td{padding:.62rem 1.35rem;text-align:left;vertical-align:middle}
+thead th{
+  font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  font-size:.68rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;padding-top:1rem;padding-bottom:.55rem;
+  border-bottom:1px solid var(--rule);
+}
+tbody tr+tr td{border-top:1px solid var(--rule-soft)}
+tbody tr.rule-above td{border-top:1px solid var(--rule)}
+.blk{font-weight:560}
+.dim{color:var(--faint);font-size:.85em;font-family:ui-monospace,"SF Mono",Menlo,monospace}
+td.n{
+  font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  text-align:right;white-space:nowrap;width:1%;
+}
+td.n b{font-weight:600}
+.win{color:var(--accent)}
+.nullv{color:var(--null)}
+
+/* gauge: every enrichment shown between the random baseline and the ceiling */
+.gauge{width:12rem;min-width:9rem}
+.track{position:relative;height:7px;background:var(--gauge-track);border-radius:1px}
+.fill{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:1px}
+.fill.is-null{background:var(--null)}
+.mark{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--faint);opacity:.75}
+.scale{
+  display:flex;justify-content:space-between;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;
+  font-size:.62rem;color:var(--faint);letter-spacing:.06em;margin-top:.3rem;
+}
+
+/* ---------- verdicts ---------- */
+.verdicts{display:grid;gap:1.4rem;margin-top:1.6rem}
+.verdict{
+  border-left:2px solid var(--accent);padding:.1rem 0 .1rem 1.15rem;max-width:44rem;
+}
+.verdict h3{
+  font-size:1rem;margin:0 0 .35rem;font-weight:640;letter-spacing:-.005em;
+}
+.verdict p{margin:0;color:var(--muted);font-size:.96rem}
+.verdict p b{color:var(--ink)}
+
+/* ---------- spec card ---------- */
+.spec{
+  background:var(--accent-soft);border:1px solid var(--rule);border-radius:3px;
+  padding:1.5rem 1.6rem;margin-top:.75rem;max-width:44rem;
+}
+.spec h3{margin:0 0 1rem;font-size:1rem;font-weight:640}
+.spec dl{display:grid;grid-template-columns:auto 1fr;gap:.55rem 1.4rem;margin:0;
+  font-size:.94rem;align-items:baseline}
+.spec dt{color:var(--muted)}
+.spec dd{margin:0;font-family:ui-monospace,"SF Mono",Menlo,monospace;
+  font-variant-numeric:tabular-nums}
+.spec dd small{font-family:inherit;color:var(--muted)}
+
+/* ---------- compact fact list ---------- */
+.facts{display:grid;gap:1.05rem;margin:0;padding:0;list-style:none;max-width:44rem}
+.facts li{padding-left:1.15rem;position:relative;color:var(--muted);font-size:.96rem}
+.facts li::before{
+  content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;
+  background:var(--accent);border-radius:50%;
+}
+.facts b{color:var(--ink);font-weight:620}
+.facts code,p code,.verdict code{
+  font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  font-size:.86em;background:var(--rule-soft);padding:.08em .34em;border-radius:2px;
+}
+
+/* ---------- limits ---------- */
+.limits{border-top:1px solid var(--rule);margin-top:1.2rem;padding-top:1.4rem;
+  display:grid;gap:1.05rem;max-width:44rem}
+.limit{display:grid;grid-template-columns:6.5rem 1fr;gap:1rem;align-items:baseline}
+.limit .tag{
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.66rem;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--null);
+  background:var(--null-soft);padding:.2rem .45rem;border-radius:2px;
+  justify-self:start;white-space:nowrap;
+}
+.limit p{margin:0;font-size:.95rem;color:var(--muted)}
+.limit p b{color:var(--ink)}
+
+footer{
+  margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--rule);
+  color:var(--faint);font-size:.82rem;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;
+  display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;
+}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:640px){
+  body{padding:0 1.1rem 4rem}
+  header.mast{padding-top:3rem}
+  .limit{grid-template-columns:1fr;gap:.35rem}
+}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="eyebrow">
+    <span>DeaminaFormer-DNA</span><span>Transfer test + architecture search</span>
+    <span>21–22 Aug 2026, overnight</span><span>V100 · 923,989 sites · 5 folds by held-out chromosome</span>
+  </div>
+  <h1>The cancer-trained model does not predict base-editor off-targets.</h1>
+  <p class="standfirst">
+    A gradient-boosted model trained on APOBEC3-family mutations from tumour genomes predicts
+    held-out tumour chromosomes at <strong>5.369×</strong>. Applied to 216 million sites in
+    base-edited HEK293T cells, it ranks the editor's actual off-target sites at
+    <strong>0.95–1.00×</strong> — flat — and <em>below</em> the deaminase-free control at every
+    sharper threshold. The model works; the transfer does not.
+  </p>
+  <p class="standfirst" style="font-size:1rem">
+    Two results, in order: the architecture search that produced the strongest available model,
+    and the transfer test that model then failed. The second is only meaningful because of the
+    first.
+  </p>
+</header>
+
+
+<section>
+  <h2><span class="num">01 — The question</span>Does it transfer?</h2>
+  <p class="lede">
+    Until this test the project had two things: the model predicting held-out tumour
+    chromosomes, and the hairpin <em>feature</em> measured separately on both datasets. Neither
+    is the model transferring — and the model had never been applied to a single HEK293T site.
+  </p>
+
+  <div class="tablecard">
+    <table>
+      <caption>
+        Trained on PCAWG only. Scored on <b>215,881,277</b> jointly-eligible sites in
+        base-edited HEK293T. <b>The calibrator column is the control</b>: if both arms enrich
+        equally, the model is predicting where variants get <em>called</em>, not anything about
+        the editor. Only an editor-minus-calibrator gap is evidence of transfer.
+      </caption>
+      <thead>
+        <tr><th scope="col">Depth</th><th scope="col" style="text-align:right">Editor</th>
+        <th scope="col" style="text-align:right">n</th>
+        <th scope="col" style="text-align:right">Deaminase-free control</th>
+        <th scope="col" style="text-align:right">n</th>
+        <th scope="col" style="text-align:right">gap</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="blk">top 0.1%</span> <span class="dim">clone2</span></td>
+          <td class="n nullv">0.806×</td><td class="n dim">16</td>
+          <td class="n">1.289×</td><td class="n dim">117</td><td class="n nullv">−0.483</td></tr>
+        <tr><td><span class="blk">top 1%</span> <span class="dim">clone2</span></td>
+          <td class="n nullv">0.721×</td><td class="n dim">143</td>
+          <td class="n">1.089×</td><td class="n dim">988</td><td class="n nullv">−0.368</td></tr>
+        <tr><td><span class="blk">top 5%</span> <span class="dim">clone2 · best powered</span></td>
+          <td class="n"><b>0.954×</b></td><td class="n dim">946</td>
+          <td class="n">0.962×</td><td class="n dim">4,365</td><td class="n">−0.008</td></tr>
+        <tr class="rule-above"><td><span class="blk">top 5%</span> <span class="dim">clone5 · replication</span></td>
+          <td class="n"><b>1.001×</b></td><td class="n dim">988</td>
+          <td class="n">0.997×</td><td class="n dim">3,989</td><td class="n">+0.004</td></tr>
+        <tr class="rule-above"><td><span class="blk">positive control</span>
+          <span class="dim">same model, PCAWG in-sample</span></td>
+          <td class="n win"><b>5.369×</b></td><td class="n dim">924</td>
+          <td class="n dim">—</td><td class="n dim">—</td><td class="n dim">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="verdicts">
+    <div class="verdict">
+      <h3>Flat where it is well powered, depleted where it is sharp</h3>
+      <p>
+        At top 5% — <b>946 and 988</b> hits per arm — both clones sit at <b>0.954×</b> and
+        <b>1.001×</b>. At the sharp tail the model actively <em>avoids</em> the editor's sites.
+      </p>
+    </div>
+    <div class="verdict">
+      <h3>The gap runs the wrong way</h3>
+      <p>
+        The model ranks the <b>deaminase-free control's</b> sites above the editor's at every
+        depth but the last. The control's mild 1.0–1.29× is the calling-bias signal it was
+        included to expose.
+      </p>
+    </div>
+    <div class="verdict">
+      <h3>The model leg has since been hardened twice</h3>
+      <p>
+        Both checks are on the model's <em>cross-validated</em> tail enrichment, not on the
+        5.369× in-sample figure above. Adding coverage decile to the trinucleotide+strand
+        matching key left it intact (<b>5.119×</b> against 4.960× unmatched), and a
+        leave-one-donor-out jackknife over all 21 donors gives <b>±0.30</b> — dropping any
+        single donor moves the tail less than half the noise floor. What the model learned is
+        neither a coverage artefact nor one person's mutations.
+      </p>
+    </div>
+    <div class="verdict">
+      <h3>Not a coverage artefact — and the audit found the mechanism</h3>
+      <p>
+        The model's top sites have <em>higher</em> coverage than average (26.66 vs 25.98), and
+        the depletion survives coverage banding in all four bands. But its top 0.1% is
+        <b>GC-rich (0.4562)</b> while the editor's real off-targets are <b>AT-shifted
+        (0.354–0.378)</b>. The tumour-learned preference points at a different sequence regime
+        than where this editor deposits damage.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">02 — The model that was tested</span>Same data, same folds, two heads</h2>
+  <p class="lede">
+    Every row: identical trainset, identical five folds split by held-out chromosome,
+    identical pooled out-of-fold top-0.1% metric. The only thing that varies is the input
+    block and the learner reading it.
+  </p>
+
+  <div class="tablecard">
+    <table>
+      <caption>
+        Top-0.1% enrichment, <b>n = 924</b> sites. Random baseline <b>0.917×</b>; arithmetic
+        ceiling <b>11.000×</b> (base rate 1/11 — a value at the ceiling would mean leakage,
+        not skill). Each gauge spans random to ceiling, with the tick at the baseline.
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Input block</th>
+          <th scope="col" style="text-align:right">MLP head</th>
+          <th scope="col" style="text-align:right">GB head</th>
+          <th scope="col">GB head, against random and ceiling</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="blk">Hairpin geometry</span> <span class="dim">6 feat</span></td>
+          <td class="n">4.881×</td>
+          <td class="n"><b>4.940×</b></td>
+          <td class="gauge">
+            <div class="track"><div class="fill" style="width:44.9%"></div><div class="mark" style="left:8.3%"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="blk">Hairpin + thermodynamic</span> <span class="dim">16 feat</span></td>
+          <td class="n">4.655×</td>
+          <td class="n win"><b>5.036×</b></td>
+          <td class="gauge">
+            <div class="track"><div class="fill" style="width:45.8%"></div><div class="mark" style="left:8.3%"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="blk">NT-v2 embeddings alone</span> <span class="dim">1024 dim</span></td>
+          <td class="n">1.250×</td>
+          <td class="n nullv"><b>1.048×</b></td>
+          <td class="gauge">
+            <div class="track"><div class="fill is-null" style="width:9.5%"></div><div class="mark" style="left:8.3%"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="blk">NT-v2 + hairpin geometry</span></td>
+          <td class="n nullv">1.488×</td>
+          <td class="n">4.857×</td>
+          <td class="gauge">
+            <div class="track"><div class="fill" style="width:44.2%"></div><div class="mark" style="left:8.3%"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="blk">Everything fused</span> <span class="dim">seq + struct + both encoders</span></td>
+          <td class="n">2.333×</td>
+          <td class="n">4.774×</td>
+          <td class="gauge">
+            <div class="track"><div class="fill" style="width:43.4%"></div><div class="mark" style="left:8.3%"></div></div>
+          </td>
+        </tr>
+        <tr class="rule-above">
+          <td><span class="blk">Published baseline</span> <span class="dim">one-hot + hairpin, GB</span></td>
+          <td class="n dim">—</td>
+          <td class="n">5.280×</td>
+          <td class="gauge">
+            <div class="track"><div class="fill" style="width:48.0%"></div><div class="mark" style="left:8.3%"></div></div>
+            <div class="scale"><span>0.917× random</span><span>11.000× ceiling</span></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">03 — Reading it</span>Three conclusions, and the control that separates them</h2>
+
+  <div class="verdicts">
+    <div class="verdict">
+      <h3>The embeddings are empty, not diluted</h3>
+      <p>
+        Gradient boosting subsamples features and can ignore noise, yet 128 principal
+        components of NT-v2 score <b>1.048×</b> against a random baseline of 0.917×. Under an
+        MLP it was 1.250×. Two heads, two architectures, same answer: genome-scale
+        pretraining over 1&nbsp;kb of context contributes nothing at the operating point.
+      </p>
+    </div>
+    <div class="verdict">
+      <h3>The MLP's collapse was the head</h3>
+      <p>
+        Adding embeddings to structure cost the MLP almost everything (4.881 → <b>1.488</b>)
+        and cost gradient boosting essentially nothing (4.940 → <b>4.857</b>). Six informative
+        dimensions drown in 1,024 under a dense layer; trees simply don't select them. This
+        control was queued <em>before</em> any of these numbers existed — without it,
+        “embeddings hurt” and “embeddings are empty” are indistinguishable, and only one is
+        true.
+      </p>
+    </div>
+    <div class="verdict">
+      <h3>Nothing beats hairpin geometry</h3>
+      <p>
+        A convolutional motif scanner over ±200&nbsp;bp — the right inductive bias for DNA,
+        2.5× the baseline's window — adds nothing to structure (4.810 vs 4.881) and reaches
+        only <b>2.595×</b> alone. Sequence is read better by a convolution than by a dense
+        layer; sequence just isn't where the tail lives.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">04 — The recommendation</span>Small, structural, auditable</h2>
+  <p class="lede">
+    For a gate that has to be explained to a regulator, this is a better outcome than a
+    foundation model would have been.
+  </p>
+
+  <div class="spec">
+    <h3>16 features (6 hairpin geometry + 10 thermodynamic), gradient-boosted</h3>
+    <dl>
+      <dt>Top-0.1% enrichment</dt>
+      <dd>5.036× <small>random 0.917×, ceiling 11.000×</small></dd>
+      <dt>Expected calibration error</dt>
+      <dd>0.00125 <small>spec &lt; 0.05</small></dd>
+      <dt>At the operating point</dt>
+      <dd>predicts 0.4822, observes 0.4782 <small>n = 895</small></dd>
+      <dt>By genomic category</dt>
+      <dd>4.4–5.4× <small>CDS, intron/UTR, intergenic alike</small></dd>
+    </dl>
+  </div>
+
+  <p style="margin-top:1.4rem">
+    Calibration deserves the caveat it's usually given without: a constant predictor that
+    always returns the base rate scores <b>ECE&nbsp;0.00000</b> and is useless. Low ECE alone
+    proves nothing. What makes this model calibrated is that it moves — a 13.1× spread
+    between its 0.1st and 99.9th prediction percentiles — <em>and</em> is right where it
+    commits: at the top 0.1% it says 48.2% and the truth is 47.8%.
+  </p>
+</section>
+
+<section>
+  <h2><span class="num">05 — Supporting</span>What else the night settled</h2>
+  <ul class="facts">
+    <li>
+      <b>A model is required; a threshold isn't enough.</b> The best single hand-written rule —
+      trained on nothing, cross-validated against nothing, which if anything favours it — is
+      <code>hp_score</code> at 2.988×. A stem&nbsp;≥&nbsp;8 cut covers 2,229 sites at a 1.860×
+      positive-rate ratio, but the top 0.1% needs 924, so every threshold must cut inside a
+      tied block. Ranking within ties is exactly what the model supplies.
+    </li>
+    <li>
+      <b>Site identity is not learnable, even in principle.</b> Two disjoint halves of the donor
+      cohort share 10 sites where chance predicts 4.6–17.6 depending on the assumed universe —
+      at chance. 99.974% of sites appear in exactly one donor. The learnable target is a
+      per-site <em>propensity</em>, never <em>which</em> site gets hit.
+    </li>
+    <li>
+      <b>DNA parameters, not RNA.</b> The thermodynamic block folds with Mathews&nbsp;2004 DNA
+      energies. On the same 150 windows, RNA parameters give a mean MFE of −21.1 kcal/mol
+      against DNA's −8.9 — a 2.4× error that would have been invisible downstream.
+    </li>
+    <li>
+      <b>AUROC was inverted against the tail at every step.</b> Among the convolutional blocks,
+      <code>cnn_only</code> has the <em>best</em> AUROC (0.5671) and roughly half the tail of
+      <code>struct_only</code>, which has the worst (0.5388). Selecting on AUROC would have
+      picked the weakest model at every decision.
+    </li>
+    <li>
+      <b>Confounds cleared.</b> GC in 10/10 deciles; sequence complexity in 10/10 on two
+      independent measures, both <em>weakest</em> at lowest complexity — refuting the
+      repeat-artefact reading rather than merely surviving it; and coverage/mappability, where
+      the model's tail holds under coverage-matched negatives (5.280 → 5.096).
+    </li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="num">06 — Limits</span>What this does not establish</h2>
+
+  <div class="limits">
+  <div class="limit"><span class="tag">open</span>
+    <p><b>The calibrator is from a different study than the editor.</b> A batch difference
+    between studies could in principle blunt the editor arm. A within-study rerun against a
+    same-study deaminase-free control is the outstanding check — it is the last live alternative
+    explanation for the negative, and the one result here that could still move. Everything else
+    on this page has been through its confound.</p></div>
+  <div class="limit"><span class="tag">by design</span>
+    <p><b>Enrichment is the endpoint, not AUROC.</b> Every ratio above sits beside its own
+    random baseline; a base rate of 1/11 makes <code>11.000×</code> the arithmetic ceiling, so a
+    value near it would mean leakage rather than success. The deaminase-free control's ~1.0–1.29×
+    is the floor a real editor signal has to clear, not 1.0.</p></div>
+  <div class="limit"><span class="tag">provenance</span>
+    <p><b>The training positives are APOBEC3-family and YTCA-skewed, not verifiably A3A.</b>
+    The A3A-versus-A3B dichotomy did not validate, so "cancer-trained APOBEC model" is the
+    honest description of what was transferred.</p></div>
+    <div class="limit">
+      <span class="tag">Noise floor</span>
+      <p>
+        The built-in random baseline should read exactly 1.000×. Across 18 blocks it is
+        <b>0.973 ± 0.062</b>. <b>Differences below ~12% at top 0.1% are not resolvable</b> —
+        which covers the 5.036 vs 5.280 gap, and retired an earlier claim that one model
+        “beat” another when it only matched it.
+      </p>
+    </div>
+    <div class="limit">
+      <span class="tag">Blocked</span>
+      <p>
+        Tier&nbsp;A/B stratified recall — the spec's headline metric — needs COSMIC Tier&nbsp;1,
+        ClinGen HI Level&nbsp;3 and DepMap common essentials. None are on either node. That's a
+        <b>data acquisition task, not an analysis one</b>; only the coding/intergenic split
+        could be built.
+      </p>
+    </div>
+    <div class="limit">
+      <span class="tag">Prior</span>
+      <p>
+        Calibration is to the sampled <b>1-in-11 base rate</b>, which is an artefact of negative
+        sampling and not genome-wide prevalence. Any deployed threshold must be re-based before
+        a risk number is quoted to anyone.
+      </p>
+    </div>
+    <div class="limit">
+      <span class="tag">Cohort</span>
+      <p>
+        The training set rests on <b>21 donors</b>, not the 133 available at lower purity.
+        Purity beat volume on the tail, but it cost donor diversity, and that bounds how far
+        these numbers generalise.
+      </p>
+    </div>
+    <div class="limit">
+      <span class="tag">Not run</span>
+      <p>
+        Fine-tuning the foundation model was <b>pre-registered as unwarranted</b> if frozen
+        embeddings failed to beat the baseline. They scored 1.048×. Deliberately not attempted,
+        rather than attempted and quietly dropped.
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>13/13 table values verified against the committed JSON artifacts</span>
+  <span>experiments/phase7_a3a_hairpin §14</span>
+  <span>branch phase7-a3a-hairpin</span>
+</footer>
+
+</div>
