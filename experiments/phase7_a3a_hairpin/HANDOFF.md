@@ -801,3 +801,54 @@ arm instead of 2–3**, or a different assay design.
   eligibility filter and was being quoted without one.
 - The **6.4× site-count gap** between Lj-BE clone3 and clone5 is **subclonal load, not noise**:
   the excess peaks at VAF 0.10–0.15 (10.8×) and vanishes at clonal VAF (1.83×).
+
+### 15.6 A second compositional confound on endpoint B: GC — found 2026-08-22 05:35
+
+Coverage banding fixes **depth**. It leaves **GC composition** entirely untouched, and that is a
+confound of the same size and shape. Check 4 had been run all night on the PCAWG model and
+**never once on the editor arms**.
+
+The hairpin background is strongly GC-dependent — inverted repeats are far commoner in AT-rich
+sequence:
+
+| GC decile | p_bg(stem≥6) |
+|---|---:|
+| 0.012–0.284 | 0.03564 |
+| 0.543–0.951 | 0.01248 |
+
+A **2.9× span**. So any shift in the GC composition of the called sites moves the pooled
+enrichment directly. Stratifying A3A-Y130F-clone2 against nCas9-clone1:
+
+| | crude OR | GC-adjusted MH | shift |
+|---|---:|---:|---:|
+| editor | 0.895 | 0.760 | **−15.0%** |
+| calibrator | 1.053 | 1.041 | −1.2% |
+
+**The confound is asymmetric** — 15% on the editor, 1.2% on the calibrator — and 15% exceeds the
+~12% empirical noise floor. An asymmetric compositional effect of that size is exactly what
+manufactures a spurious between-arm difference, and one such difference has already been
+retracted tonight for the analogous reason on VAF.
+
+**Endpoint B requires GC stratification in addition to coverage banding.** Neither substitutes
+for the other. `ops/auto_advance_gc.sh` runs it on the clone6 pairs plus the deaminase-free
+pair as a null control for the estimator itself.
+
+Direction here is unaffected (adjustment makes the editor *more* depleted), but the method
+point holds regardless of which way it happened to move.
+
+### 15.7 An instrument note worth carrying forward
+`ops/progress.sh` accumulated **nine** defects in one night, every one found because a number
+it printed did not survive a second look — a hardcoded batch size from the wrong node, a
+read counter that double-counts re-aligned samples, a merge row timing the alignment instead
+of the merge, and four separate failures of a recent-rate ETA.
+
+The ETA was eventually **deleted rather than fixed a fourth time**. Its scoreboard was four
+false alarms and zero true positives, and the cause was structural: batches take 8–25 min and
+the column was sampled every ~10 min, so a two-point rate is dominated by where batch
+boundaries fall. It now reports **minutes since last output** — a direct measurement that
+cannot produce a 103.9h reading, and the signal every intervention decision actually used.
+
+Eight suspected stalls were investigated tonight and **all eight were slow patches that
+self-resolved** (11–25 min, hard reads arriving in contiguous flowcell-ordered blocks). The
+cost of checking was ~2 min each; the cost of acting on one would have been ~16 h, since the
+worker writes a `FAILED` flag on a killed pipeline that **blocks automatic re-queueing**.
