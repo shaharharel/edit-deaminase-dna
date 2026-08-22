@@ -1092,3 +1092,42 @@ baseline — rests on **21 donors**. The effect strengthened as the pool shrank 
 opposite direction from the A3A-vs-A3B claim that died going 53 → 97. Reassuring but not
 sufficient: at 21 donors a **leave-one-donor-out spread is the honest error bar** on 5.280×,
 and `qa_perfold.py` should be pointed at v5 by donor, not only by chromosome.
+
+## 20. §19.2 resolved — 5.148× is donor-robust (21/21 leave-one-donor-out)
+
+The open caveat: v5 carries the transfer test's positive control, the architecture
+recommendation and the 5.280× baseline, and rests on 21 donors. Every error bar quoted from it
+was a held-out-**chromosome** bar — spatial stability, saying nothing about whether one
+person's mutations carry the tail.
+
+```
+full-data value              5.148x
+jackknife mean               5.110x
+jackknife sd                 0.068
+min / max                    4.960 / 5.220
+spread (max-min)             0.260
+JACKKNIFE SE                 0.295     ->  5.148x +/- 0.30
+~12% noise floor             0.618
+spread / floor               0.42x     ->  DONOR-ROBUST
+```
+
+Dropping any single donor moves the tail by **less than half the noise floor**. The most
+influential is DO46330 (−0.188, 67,078 rows); the *largest* donor by rows, DO218176 at 91,960,
+lands at 5.090× — essentially the mean. **Donor size and donor influence are unrelated**,
+which is what you want: the tail is not carried by one person's mutation load.
+
+**Sharpest form.** The spread of the 21 estimates (0.260) is *smaller* than the spread of the
+21 random nulls measured alongside them (0.354, range 0.874–1.228). Donor identity is not a
+material source of uncertainty here.
+
+### 20.1 The caveat that remains
+This is a **jackknife**: it answers "does any single donor carry the result" — no. It does not
+answer "would 21 *different* donors give 5.148×". That needs a fresh cohort, and §19 shows the
+pool cannot simply be widened without giving up the purity that is worth 4.4× the volume.
+**Robust to donor removal; untested against donor replacement.**
+
+### 20.2 Generator fix
+The summary block used `vals.ptp()`, removed in NumPy 2.x. It crashed *after* all 21 replicate
+lines had printed, so no data was lost and the summary was recomputed from the log. Fixed in
+`scripts/qa_donor_jackknife.py` (`np.ptp(vals)`); the copy on ai-chem2 still has the crashing
+version and needs the fixed file pushed when access returns.
