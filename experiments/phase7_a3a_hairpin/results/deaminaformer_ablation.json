@@ -1,0 +1,120 @@
+{
+  "struct_only": {
+    "auroc_mean": 0.539,
+    "auroc_sd": 0.0088,
+    "n_feat": 6,
+    "top0.1": 4.881,
+    "rand0.1": 0.917,
+    "n_top0.1": 924,
+    "top1.0": 2.579,
+    "rand1.0": 0.975
+  },
+  "seq81_only": {
+    "auroc_mean": 0.5739,
+    "auroc_sd": 0.0032,
+    "n_feat": 324,
+    "top0.1": 2.012,
+    "rand0.1": 0.917,
+    "n_top0.1": 924,
+    "top1.0": 1.749,
+    "rand1.0": 0.975
+  },
+  "seq81+struct (GB parity)": {
+    "auroc_mean": 0.5731,
+    "auroc_sd": 0.0042,
+    "n_feat": 330,
+    "top0.1": 2.631,
+    "rand0.1": 0.917,
+    "n_top0.1": 924,
+    "top1.0": 1.985,
+    "rand1.0": 0.975
+  },
+  "thermo_only": {
+    "auroc_mean": 0.5234,
+    "auroc_sd": 0.0053,
+    "n_feat": 10,
+    "top0.1": 2.476,
+    "rand0.1": 0.917,
+    "n_top0.1": 924,
+    "top1.0": 1.465,
+    "rand1.0": 0.975
+  },
+  "struct+thermo": {
+    "auroc_mean": 0.5401,
+    "auroc_sd": 0.0065,
+    "n_feat": 16,
+    "top0.1": 4.655,
+    "rand0.1": 0.917,
+    "n_top0.1": 924,
+    "top1.0": 2.515,
+    "rand1.0": 0.975
+  },
+  "ntv2_only": {
+    "auroc_mean": 0.5232,
+    "auroc_sd": 0.0036,
+    "n_feat": 1024,
+    "top0.1": 1.155,
+    "rand0.1": 0.917,
+    "n_top0.1": 924,
+    "top1.0": 1.107,
+    "rand1.0": 0.975
+  },
+  "ntv2+struct": {
+    "auroc_mean": 0.531,
+    "auroc_sd": 0.0077,
+    "n_feat": 1030,
+    "top0.1": 1.488,
+    "rand0.1": 0.917,
+    "n_top0.1": 924,
+    "top1.0": 1.142,
+    "rand1.0": 0.975
+  },
+  "hyena_only": {
+    "auroc_mean": 0.5444,
+    "auroc_sd": 0.0095,
+    "n_feat": 256,
+    "top0.1": 1.119,
+    "rand0.1": 0.917,
+    "n_top0.1": 924,
+    "top1.0": 1.182,
+    "rand1.0": 0.975
+  },
+  "hyena+struct": {
+    "auroc_mean": 0.553,
+    "auroc_sd": 0.0083,
+    "n_feat": 262,
+    "top0.1": 3.786,
+    "rand0.1": 0.917,
+    "n_top0.1": 924,
+    "top1.0": 2.01,
+    "rand1.0": 0.975
+  },
+  "ntv2+hyena": {
+    "auroc_mean": 0.5298,
+    "auroc_sd": 0.0049,
+    "n_feat": 1280,
+    "top0.1": 1.202,
+    "rand0.1": 0.917,
+    "n_top0.1": 924,
+    "top1.0": 1.107,
+    "rand1.0": 0.975
+  },
+  "ntv2+hyena+struct": {
+    "auroc_mean": 0.533,
+    "auroc_sd": 0.0043,
+    "n_feat": 1286,
+    "top0.1": 1.25,
+    "rand0.1": 0.917,
+    "n_top0.1": 924,
+    "top1.0": 1.204,
+    "rand1.0": 0.975
+  },
+  "_provenance": {
+    "source": "recovered from fuse2.log; the run was OOM-killed before json.dump",
+    "complete": false,
+    "missing_block": "ALL (+seq81) -- 1,620 dims, the block that caused the kill",
+    "blocks_recovered": 10,
+    "metric": "pooled out-of-fold top-K% enrichment, 5 folds by held-out CHROMOSOME",
+    "gb_baseline_top0.1": 5.28
+  }
+}

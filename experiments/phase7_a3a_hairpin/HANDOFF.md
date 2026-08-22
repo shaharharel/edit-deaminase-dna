@@ -601,3 +601,125 @@ pinned; only matters for a cross-node comparison, and none has been run.
   are now renamed `SUPERSEDED_*`.
 - `feat/ARTIFACTS.md` on both nodes is the authority on what each result file actually
   contains. If a filename and the manifest disagree, trust the manifest.
+
+---
+
+## 14. DeaminaFormer architecture search — 2026-08-21/22 overnight (COMPLETE, decisive)
+
+The question was: does a pretrained DNA foundation model, fused with structure and sequence
+features, beat the gradient-boosted baseline at the top 0.1% tail? Ran end to end on a
+V100 (`ai-gpu`, us-central1-c, 200 GB scratch PD at `/mnt/a3a`). **Answer: no, and the
+reason is now pinned down rather than guessed.**
+
+### 14.1 The decisive table
+Same data (`a3a_trainset_v5`, 923,989 rows, base rate 1/11), same 5 folds by **held-out
+chromosome**, same pooled-OOF top-K% metric, random baseline beside every number.
+
+|                              | MLP head | GB head |
+|------------------------------|---------:|--------:|
+| struct only (6 feat)         |  4.881×  | 4.940×  |
+| struct + thermo (16 feat)    |  4.655×  | **5.036×** |
+| NT-v2 embeddings alone       |  1.250×  | 1.048×  |
+| NT-v2 + struct               |  1.488×  | 4.857×  |
+| everything                   |  2.333×  | 4.774×  |
+| GB one-hot + hairpin (baseline) | — | 5.280× |
+
+random 0.917 · arithmetic ceiling 11.000 · n=924 at top 0.1%
+
+### 14.2 Three conclusions, and the control that separates them
+1. **The embeddings are EMPTY for this task, not merely diluted.** GB subsamples features
+   and can ignore noise, yet 128 PCs of NT-v2 score 1.048× against a random baseline of
+   0.917. Two heads, two architectures, same answer.
+2. **The MLP's collapse was the HEAD.** Adding embeddings to structure cost the MLP almost
+   everything (4.881 → 1.488) and cost GB essentially nothing (4.940 → 4.857). The
+   encoder-vs-head control was queued **before** any of these numbers were seen — without
+   it, "embeddings hurt" and "embeddings are empty" are indistinguishable.
+3. **Nothing beats hairpin geometry.** A Conv1d motif scanner over ±200 bp (2.5× the
+   baseline's window, the right inductive bias) adds nothing to structure (4.810 vs 4.881)
+   and reaches 2.595× alone.
+
+**AUROC was inverted against the tail at every step.** Among CNN blocks `cnn_only` has the
+*best* AUROC (0.5671) and half the tail of `struct_only` (worst AUROC, 0.5388). Selecting on
+AUROC would have chosen the weakest model at every decision.
+
+### 14.3 The recommended model
+**16 features (6 hairpin geometry + 10 thermodynamic), gradient-boosted.**
+- top 0.1% enrichment **5.036×** (random 0.917)
+- **ECE 0.00125** (spec < 0.05) — and calibrated at the operating point, not just on
+  average: at the top 0.1% it predicts **0.4822**, observes **0.4782**
+- category-agnostic: 4.4–5.4× in CDS, intron/UTR and intergenic alike
+- auditable, cheap, mechanistically interpretable — a better outcome for a regulatory gate
+  than a foundation model would have been
+
+### 14.4 Supporting results
+- **A model is required; a threshold is not enough.** Best single hand rule (no training,
+  no folds, which *favours* it) is hp_score at 2.988×. stem≥8 covers 2,229 sites at a
+  1.860× positive-rate ratio; the top 0.1% needs 924, so every threshold must cut inside a
+  tied block. Ranking within ties is what the model supplies.
+- **Site identity is not learnable.** Disjoint donor halves (10 vs 11 donors) share 10 sites
+  where chance predicts 4.6–17.6 depending on the assumed TCW universe — **at chance**.
+  99.974% of sites appear in exactly one donor. The learnable target is a per-site
+  *propensity*, never *which* site is hit.
+- **The thermodynamic block** (DNA partition function, Mathews2004 **DNA** parameters —
+  RNA params give MFE −21.1 vs DNA −8.9, a 2.4× error) scores 2.476× alone and adds ~2%
+  to struct under GB. `p_unpaired` largely re-encodes stem length.
+- **Confounds cleared on v5**: GC 10/10 deciles; complexity 10/10 on two independent
+  measures (dinucleotide entropy and distinct-4-mer count), both *weakest* at lowest
+  complexity, refuting the repeat-artefact reading; coverage/mappability — MH-adjusted
+  1.323 vs crude 1.349 at stem≥8, and the model tail survives coverage-matched negatives
+  (5.280 → 5.096, inside the noise floor).
+- **Hairpin features are class-consistent.** An independently written inverted-repeat
+  scanner relates to the stored `stem` identically in both classes (Δcorrelation 0.0096,
+  Δmean-offset 0.0314) — this is the check the whole result rests on, because a
+  class-dependent feature would have fooled both learners identically.
+
+### 14.5 Empirical noise floor — read every comparison against it
+The built-in random baseline should be exactly 1.000×. Across 18 blocks it is
+**0.973 ± 0.062** (range 0.870–1.085). **Differences below ~12% at top 0.1% are not
+resolvable.** This retired one earlier claim ("v5 fused *beats* v2" → *matches* v2) and it
+covers the 5.036 vs 5.280 gap.
+
+### 14.6 Bugs found and fixed in this block of work
+- **BUG 6, three instances**: sed-copied scripts writing their parent's output name. Found
+  in `.json` outputs (4 scripts) and then again in `.npy` OOF outputs (8 scripts) after I
+  had declared the family closed twice. *"I fixed that bug family" is a claim about a
+  SEARCH*, and mine was incomplete twice.
+- **N-handling, three instances in one night**: `np.clip(win,0,3)` silently recoding N→T;
+  NT-v2's 6-mer tokenizer falling back to single-character tokens on N (a 1,025-N window
+  becomes 1,025 tokens, padding the whole batch → the CUDA OOM at 96%); and the same
+  ambiguity in the one-hot path. All now encode N as *absent*, never guessed.
+- **Head-slice on block-ordered files, three instances in my own QA code.** These files are
+  written positives-first, so `[:200000]` samples 45% positives instead of 9%. Fixed by
+  random sampling **plus a printed base-rate assertion** — writing the lesson down did not
+  stop me repeating it; a check did.
+- **Host OOM killed the MLP ladder** on its 1,620-dim final block after I had fixed that
+  exact fragility in the sibling script two ticks earlier. Results recovered by parsing the
+  log; generators now dump after **every** block.
+- **Two gate races**: `chain3/4` polled for a process that had not started yet; the
+  replacement waited on an artifact that **already existed from an earlier run**. Both would
+  have run two ladders on one GPU. Fixed with a timestamp gate (`touch` a stamp, require the
+  artifact to be *newer*).
+- **`pkill -f <pattern>` matched my own SSH command line twice**, killing the session.
+  Bracket form (`"[c]hain.sh"`) or kill-by-PID.
+
+### 14.7 What is NOT done
+- **Tier A/B stratified recall — the spec's headline metric — is blocked on data**, not
+  analysis: COSMIC Tier 1 (581), ClinGen HI Level 3 (~340), DepMap common essentials
+  (~1,800). None on either node. Only the C/D split (refGene) could be built.
+- **Calibration is to the sampled 1-in-11 base rate**, which is a sampling artefact, not
+  genome-wide prevalence. Any deployed threshold must be re-based before a risk number is
+  quoted.
+- **v5 rests on 21 donors**, not the 133 available at v2 — purity cost donor diversity, and
+  that bounds generalisation.
+- Fine-tuning the foundation model was **pre-registered as not warranted** if frozen
+  embeddings failed to beat GB. They scored 1.048×. Not attempted, deliberately.
+
+### 14.8 Where the artifacts are
+- `results/deaminaformer_ablation.json` — flat-MLP ladder, 11 blocks (`complete: false`,
+  names the OOM-killed block)
+- `results/deaminaformer_v2.json` — CNN ladder, 9 blocks
+- `results/gb_on_embeddings.json` — the encoder-vs-head control
+- `scripts/` — every generator, including the QA scripts that produced the confound clearances
+- On `ai-gpu`'s scratch PD (persists across the stop): `emb_ntv2_v5.npz` (1.9 GB),
+  `emb_hyena_v5.npz` (0.5 GB), `struct_thermo_v5.npz`, `a3a_trainset_v5_win1k.npz`
+- `ai-gpu` is **STOPPED**; no foreign process was running on it.
