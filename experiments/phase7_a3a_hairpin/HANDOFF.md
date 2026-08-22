@@ -1257,3 +1257,42 @@ study points at **processing, not biology**. A 20× gap in alt≥1 at similar de
 If the three controls were prepared or sequenced differently from the two editors, any
 editor-vs-control contrast within PRJNA1006866 is confounded by that — and the whole
 PRJNA1006866 control set should be treated as unusable rather than merely noisy.
+
+## 23. CORRECTION — gate A0 judged the wrong stratum; the within-study calibrator existed
+
+§21/§21.2/§22 said no usable within-study control exists for the A3A-Y130F arm. **That was
+wrong, and it was my gate's fault.** Gate A0 failed calibrators on their **alt≥1** noise floor;
+`s7c_editor` analyses **alt≥2**. Over all 23 chromosomes:
+
+| sample | alt≥1 (what the gate judged) | alt≥2 (what the analysis uses) |
+|---|---|---|
+| D10A-clone1 | 5.13× FAIL | **1.15× PASS** |
+| D10A-clone6 | 2.92× FAIL | **0.84× PASS** |
+| P66-background | 9.63× FAIL | 4.67× FAIL |
+
+Both D10A clones' entire defect is alt=1 sequencing error — 94.6% / 94.0% singletons against
+70–80% in sound samples, mean alt 1.49 / 1.67 against 3.6–4.0 — and the analysis discards that
+stratum before computing anything. §22's Consequence 1 is retracted. Background fails both
+strata and stays out.
+
+§22's *other* claims survived audit: the extrapolation alternative is excluded
+(corr(distance-beyond-fit, residual) = −0.065, non-monotone) and no strand skew exists anywhere
+(all eight samples 0.990–1.010).
+
+### 23.1 The within-study arm, run at last — it replicates the null and is better controlled
+
+| comparison | editor MH | calib MH | ed−cal | GC-shift asymmetry |
+|---|---:|---:|---:|---|
+| clone2 vs D10A-clone6 **within** | 0.777 | 0.961 | **−0.184** | 14.7% vs 10.5% = 4.2pp |
+| clone5 vs D10A-clone6 **within** | 0.748 | 0.961 | **−0.213** | 14.1% vs 10.6% = 3.5pp |
+| clone2 vs nCas9-clone1 cross | 0.760 | 1.041 | −0.281 | 15.0% vs 1.2% = 13.8pp |
+| clone5 vs nCas9-clone1 cross | 0.739 | 1.041 | −0.302 | 14.5% vs 1.2% = 13.3pp |
+| **true-null floor** (nCas9-c2 vs c1) | 1.077 | 1.042 | **+0.035** | — |
+
+The GC-shift asymmetry falls from ~14pp to ~4pp — what a same-study calibrator should do — and
+the difference shrinks from −0.28/−0.30 to −0.18/−0.21, so **part of the cross-study excess was
+study artefact**. Both within-study values remain far on the wrong side of the pre-registered
++0.11 bar and below the measured +0.035 floor. Two clones agreeing to 0.029.
+
+**What does not improve:** burden asymmetry gets *worse* — editor 19,714 specific sites vs
+calibrator 171,632 (8.7×, against 4.6× for nCas9). §21.1's caveat stands with more force.
