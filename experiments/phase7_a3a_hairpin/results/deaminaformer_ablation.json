@@ -113,8 +113,9 @@
     "source": "recovered from fuse2.log; the run was OOM-killed before json.dump",
     "complete": false,
     "missing_block": "ALL (+seq81) -- 1,620 dims, the block that caused the kill",
-    "blocks_recovered": 10,
+    "blocks_recovered": 11,
     "metric": "pooled out-of-fold top-K% enrichment, 5 folds by held-out CHROMOSOME",
-    "gb_baseline_top0.1": 5.28
+    "gb_baseline_top0.1": 5.28,
+    "note_offbyone": "blocks_recovered was written as 10 by an off-by-one in the recovery script (len(out)-1 evaluated before the provenance key was added); the true count is 11, which is what the run log printed."
   }
 }

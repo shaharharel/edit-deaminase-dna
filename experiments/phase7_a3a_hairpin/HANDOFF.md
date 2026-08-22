@@ -619,12 +619,16 @@ chromosome**, same pooled-OOF top-K% metric, random baseline beside every number
 |------------------------------|---------:|--------:|
 | struct only (6 feat)         |  4.881×  | 4.940×  |
 | struct + thermo (16 feat)    |  4.655×  | **5.036×** |
-| NT-v2 embeddings alone       |  1.250×  | 1.048×  |
+| NT-v2 embeddings alone       |  1.250×* | 1.048×  |
 | NT-v2 + struct               |  1.488×  | 4.857×  |
 | everything                   |  2.333×  | 4.774×  |
 | GB one-hot + hairpin (baseline) | — | 5.280× |
 
 random 0.917 · arithmetic ceiling 11.000 · n=924 at top 0.1%
+
+\* Both ladders ran an ntv2-only block under an MLP head: the flat-MLP ladder scored
+1.155× and the CNN ladder's control scored 1.250×. The table quotes the latter. Both sit
+against a random baseline of 0.917, so the conclusion is identical either way.
 
 ### 14.2 Three conclusions, and the control that separates them
 1. **The embeddings are EMPTY for this task, not merely diluted.** GB subsamples features
