@@ -1837,3 +1837,35 @@ property of **the data**, not the training source.
 **What this settles.** The obstacle to a usable safety panel is not the model, the architecture,
 or the training set. It is that **the editor's mutations are diffuse**: the top 0.1% of the most
 predictable sites in the genome contains one in every 226 of them.
+
+### 33.2 CORRECTION — §33 mixed two denominators, and its capture figure was 2.6× too generous
+
+Found because the user asked what n sat behind the 4.422×.
+
+| | denominator | base rate | top 0.1% |
+|---|---|---|---|
+| **Learnability (s13)** | constructed trainset, 918,830 rows (83,530 pos + 10× matched neg) | **0.0909 by construction** | 918 sites, ~369 positives |
+| **Genomic panel (s12)** | all jointly-eligible sites, 215,010,769 | **0.000388** (1 in 2,574) | 215,010 sites, 146 captured, 1.748× |
+
+**n was never the problem — 369 is ample.** The problem is that **4.422× is enrichment over a
+base rate I created** by downsampling negatives 10:1. It answers "can a model tell an editor site
+from a *matched* non-site" (yes). **1.748× is enrichment over the real genomic rate** and answers
+"can a model *find* editor sites in the genome" (barely). The trainset negatives are a **257×
+downsample**, so the learnability number cannot be read as genomic performance.
+
+**And the capture figure was wrong in the flattering direction.** §33 said "0.44% captured" —
+that was 369/83,530 from the *trainset* panel. The genomic panel at the same depth captures
+**146/83,530 = 0.17%**:
+
+```
+genomic top 0.1%    215,010 sites hold   146 of 83,530 = 0.17%
+genomic top 1.0%  2,150,107 sites hold   957 of 83,530 = 1.15%
+genomic top 5.0% 10,750,538 sites hold 4,114 of 83,530 = 4.93%
+```
+
+**2.6× worse than reported.** Conclusion unchanged — both far too small for a panel — but I
+quoted the better of two numbers from different denominators.
+
+**This is the seventh instance of the standing bug family, and the first to reach a number given
+to the user:** a quantity correct in its own context used downstream as if universal.
+**Rule added: every enrichment states its denominator and base rate, not just its value.**
