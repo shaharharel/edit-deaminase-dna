@@ -870,3 +870,52 @@ that made the 05:20 preview uninterpretable.
 alignment is queued behind samples whose primary endpoint has no valid comparator. Either
 locate a deaminase-free control from that BioProject, or run the arm descriptive-only with the
 limitation stated up front.
+
+---
+
+## 16. THE TRANSFER TEST — the project's central claim, tested 2026-08-22 06:40. It fails.
+
+Does a PCAWG-trained classifier rank real base-editor off-target sites above matched
+background in HEK293T? Until now the project had (a) the model predicting held-out PCAWG
+chromosomes at 5.036×, which is tumour mutations predicting tumour mutations, and (b) the
+hairpin *feature* measured separately on both datasets. **Neither is the model transferring,
+and the model had never been applied to a single HEK293T site.**
+
+**Design.** Train on PCAWG v5 (the 6 structural features that won the architecture search),
+score every jointly-eligible TCW site in HEK293T (Parent-silent, cov≥8 in both samples), and
+ask whether editor-specific sites are enriched in the model's top K%. **The calibrator is the
+control**: if both arms enrich equally, the model predicts *where variants get called* — the
+coverage, mappability and GC artefacts characterised in §15 — not anything about the editor.
+
+### Result, both editor clones, ~216 M sites scored each
+
+| top | editor | n_hit | calibrator | n_hit | ed − cal |
+|---|---:|---:|---:|---:|---:|
+| **clone2 vs nCas9-clone1** | | | | | |
+| 0.1% | 0.806× | 16 | 1.289× | 117 | −0.483 |
+| 1.0% | 0.721× | 143 | 1.089× | 988 | −0.368 |
+| 5.0% | 0.954× | 946 | 0.962× | 4,365 | −0.008 |
+| **clone5 vs nCas9-clone2** | | | | | |
+| 0.1% | 0.861× | 17 | 1.063× | 85 | −0.201 |
+| 1.0% | 0.628× | 124 | 1.003× | 802 | −0.374 |
+| 5.0% | 1.001× | 988 | 0.997× | 3,989 | +0.004 |
+
+**Positive control, same fitted model on PCAWG in-sample: 5.369× at top 0.1%.** The model
+works. What fails is the transfer.
+
+### What this establishes
+1. **The PCAWG-trained model does not predict base-editor off-targets.** At the
+   well-powered depth (top 5%, n_hit ≈ 950–990 per arm) both clones sit at **0.954× and
+   1.001×** — flat. At the sharp tail it is *depleted*, 0.63–0.86×.
+2. **The editor−calibrator gap is negative at every depth but the last.** The model ranks the
+   *deaminase-free control's* sites higher than the editor's — the opposite of the hypothesis.
+3. **The mild calibrator enrichment (1.0–1.29×) is the calling-bias signal**, exactly what the
+   control was included to expose.
+4. **It replicates across two independent clones** with independent calibrators.
+
+### Limits, stated plainly
+- The editor-specific set is **91–94% subclonal** (§15.1), so this tests prediction of
+  subclonal calls. The clonal test remains impossible at this clone count (§15.2).
+- Both calibrators are cross-study (PRJNA1042830 vs PRJNA1006866). The within-study rerun
+  against D10A-clone6 is queued and should be done before this is written up.
+- n_hit at top 0.1% is 16–17; the top-5% row is the one to read.
