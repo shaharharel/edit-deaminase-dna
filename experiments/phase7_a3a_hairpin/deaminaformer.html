@@ -222,6 +222,10 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline
     base-edited HEK293T cells, it ranks the editor's actual off-target sites at
     <strong>0.95–1.00×</strong> — flat — and <em>below</em> the deaminase-free control at every
     sharper threshold. The model works; the transfer does not.
+    <br><br><small style="opacity:.85">Each figure is enrichment over <em>its own</em> base rate,
+    and the two base rates differ by 234×: the tumour set is a constructed 1-in-11 sample, the
+    HEK293T set is the real genome at 1 in 2,574. So 5.369 and 0.95 are not on one scale —
+    read them as “clear skill” versus “none”, not as a 5.6× drop.</small>
   </p>
   <p class="standfirst" style="font-size:1rem">
     Two results, in order: the architecture search that produced the strongest available model,
@@ -243,7 +247,10 @@ a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline
     <table>
       <caption>
         Trained on PCAWG only. Scored on <b>215,881,277</b> jointly-eligible sites in
-        base-edited HEK293T. <b>The calibrator column is the control</b>: if both arms enrich
+        base-edited HEK293T, where the base rate is <b>1 in 2,574</b>. The in-sample positive
+        control at the foot of the table is on the <b>training set's</b> base rate of
+        <b>1 in 11</b> — a different denominator, included to show the model has skill on its
+        own data, not to be differenced against the rows above. <b>The calibrator column is the control</b>: if both arms enrich
         equally, the model is predicting where variants get <em>called</em>, not anything about
         the editor. Only an editor-minus-calibrator gap is evidence of transfer.
       </caption>

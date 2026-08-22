@@ -1869,3 +1869,30 @@ quoted the better of two numbers from different denominators.
 **This is the seventh instance of the standing bug family, and the first to reach a number given
 to the user:** a quantity correct in its own context used downstream as if universal.
 **Rule added: every enrichment states its denominator and base rate, not just its value.**
+
+### 33.3 Swept the record for the same defect — HANDOFF clean, the ARTIFACT was not
+
+167 enrichment-like values in HANDOFF; 5 lacked a nearby base-rate reference and all 5 are
+cross-references inside §20's disambiguation paragraph — false positives.
+
+**But that scanner tests the wrong thing.** §33's error was not a *missing* base rate (0.0909
+was stated) but two *stated* base rates compared across sections as if commensurable. Recording
+that limitation rather than claiming the sweep proves more than it does.
+
+**The real test found it in the published artifact.** HEK293T panel rows sit on a base rate of
+83,530/215,010,769 = **0.000388** (1 in 2,574); the PCAWG in-sample control on 83,999/923,989 =
+**0.0909** (1 in 11) — **234× apart**. The standfirst read "predicts held-out tumour chromosomes
+at 5.369× … ranks the editor's off-target sites at 0.95–1.00×", and the table carried 5.369× as
+a "positive control" directly beneath the HEK293T rows. Both are legitimate enrichments over
+their own base rate, so *skill vs none* is right — but a reader differences them into a 5.6×
+drop, and part of that gap is only the denominator.
+
+**Fixed in the deliverable:** the standfirst now states both base rates, the 234× ratio, and
+instructs the reader to take the figures as "clear skill versus none, not a 5.6× drop"; the
+table caption names the HEK293T rate at the rows and labels the in-sample control as being on
+the training set's 1-in-11 denominator, *"not to be differenced against the rows above"*.
+Republished to the same URL.
+
+**Not claimed:** that the sweep proves the rest of the record is free of this defect. It proves
+every enrichment states its own base rate; it does not prove no two are compared across scales
+somewhere unexamined. The only defence is the habit added in §33.2.
